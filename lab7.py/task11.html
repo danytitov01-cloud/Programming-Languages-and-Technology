@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER_STORE | Магазин будущего</title>
+    <style>
+        :root {
+            --bg-base: #0a0b10;
+            --bg-surface: #121420;
+            --bg-card: #1a1d30;
+            --accent: #00ffcc;
+            --accent-glow: rgba(0, 255, 204, 0.3);
+            --accent-purple: #bd00ff;
+            --text-main: #f0f3f8;
+            --text-muted: #8a94a6;
+            --border: #242942;
+            --radius-sm: 8px;
+            --radius-lg: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Шапка сайта */
+        header {
+            background: rgba(18, 20, 32, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 0 2rem;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        nav {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-btn.active {
+            color: var(--accent);
+            background: rgba(0, 255, 204, 0.06);
+        }
+
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        .cart-icon-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background: var(--accent-purple);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(189, 0, 255, 0.6);
+            transform: scale(0);
+            transition: var(--transition);
+        }
+
+        .cart-badge.show {
+            transform: scale(1);
+        }
+
+        .cart-badge.bump {
+            animation: bump 0.3s ease-out;
+        }
+
+        @keyframes bump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+
+        /* Главный контент */
+        main {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Вкладка Товары */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 20px rgba(0, 255, 204, 0.05);
+        }
+
+        .product-img-container {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            background: #151726;
+            position: relative;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.06);
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .product-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .btn-add {
+            background: var(--accent);
+            color: var(--bg-base);
+            border: none;
+            padding: 0.7rem 1.2rem;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-add:hover {
+            box-shadow: 0 0 15px var(--accent);
+            transform: translateY(-1px);
+        }
+
+        /* Вкладка Корзина */
+        .cart-wrapper {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (min-width: 900px) {
+            .cart-wrapper {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .cart-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .cart-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .cart-item-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            background: #151726;
+        }
+
+        .cart-item-details {
+            flex-grow: 1;
+        }
+
+        .cart-item-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .cart-item-price {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .cart-counter {
+            display: flex;
+            align-items: center;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        .counter-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            width: 32px;
+            height: 32px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .counter-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent);
+        }
+
+        .counter-value {
+            width: 40px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .btn-remove {
+            background: transparent;
+            border: none;
+            color: #ff4a5a;
+            cursor: pointer;
+            padding: 0.5rem;
+            font-weight: 600;
+            transition: var(--transition);
+            border-radius: var(--radius-sm);
+        }
+
+        .btn-remove:hover {
+            background: rgba(255, 74, 90, 0.1);
+        }
+
+        .cart-summary {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 110px;
+        }
+
+        .summary-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .summary-row.total {
+            color: var(--text-main);
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+        }
+
+        .summary-row.total span:last-child {
+            color: var(--accent);
+        }
+
+        .btn-checkout {
+            width: 100%;
+            background: var(--accent-purple);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(189, 0, 255, 0.3);
+        }
+
+        .btn-checkout:hover {
+            box-shadow: 0 0 25px rgba(189, 0, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .empty-cart-message {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+        }
+
+        .btn-back-to-shop {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            margin-top: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-back-to-shop:hover {
+            background: rgba(0, 255, 204, 0.08);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Вкладка О магазине */
+        .about-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--text-main), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .about-p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .features-list {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .feature-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1.25rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .feature-title {
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Всплывающие уведомления (Toasts) */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: #1c2035;
+            border-left: 4px solid var(--accent);
+            color: var(--text-main);
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            font-weight: 600;
+            min-width: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: toastIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .toast.error {
+            border-left-color: #ff4a5a;
+        }
+
+        @keyframes toastIn {
+            from { transform: translateX(100%) scale(0.9); opacity: 0; }
+            to { transform: translateX(0) scale(1); opacity: 1; }
+        }
+
+        .toast.fade-out {
+            animation: toastOut 0.3s ease forwards;
+        }
+
+        @keyframes toastOut {
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Футер */
+        footer {
+            border-top: 1px solid var(--border);
+            background: var(--bg-surface);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка сайта -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo" onclick="navigateTo('products'); return false;">
+                CYBER<span>_</span>STORE
+            </a>
+            <nav>
+                <button class="nav-btn active" id="btn-products" onclick="navigateTo('products')">Товары</button>
+                <button class="nav-btn" id="btn-cart" onclick="navigateTo('cart')">
+                    <span class="cart-icon-wrap">
+                        Корзина
+                        <span class="cart-badge" id="cart-counter-badge">0</span>
+                    </span>
+                </button>
+                <button class="nav-btn" id="btn-about" onclick="navigateTo('about')">О магазине</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Основное содержимое -->
+    <main>
+        
+        <!-- СТРАНИЦА: ТОВАРЫ -->
+        <section id="page-products" class="page active">
+            <h2>Наши девайсы</h2>
+            <div class="products-grid" id="products-container"></div>
+        </section>
+
+        <!-- СТРАНИЦА: КОРЗИНА -->
+        <section id="page-cart" class="page">
+            <h2>Ваш заказ</h2>
+            <div id="cart-content-root"></div>
+        </section>
+
+        <!-- СТРАНИЦА: О МАГАЗИНЕ -->
+        <section id="page-about" class="page">
+            <div class="about-container">
+                <h1 class="about-title">CYBER_STORE v2.0</h1>
+                <p class="about-p">
+                    Добро пожаловать в хаб высокотехнологичной электроники. Мы поставляем передовые устройства, 
+                    которые меняют представление о взаимодействии человека с цифровым миром. Каждая деталь, от дизайна интерфейса 
+                    до сборки наших гаджетов, подчинена одной цели — безупречной функциональности.
+                </p>
+                <p class="about-p">
+                    Наше SPA-приложение работает полностью на стороне клиента. Никаких лишних перезагрузок, 
+                    только мгновенный отклик, плавная анимация и интуитивное управление вашей корзиной в реальном времени.
+                </p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-title">⚡ Мгновенная доставка</div>
+                        <div class="feature-desc">Дроны доставят ваш девайс в любую точку города за 45 минут.</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-title">🛡️ Гарантия 3 года</div>
+                        <div class="feature-desc">Полная техническая поддержка и моментальная замена компонентов.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Контейнер для тостов -->
+    <div class="toast-container" id="toast-root"></div>
+
+    <!-- Футер -->
+    <footer>
+        &copy; 2026 CYBER_STORE. Все права защищены. Разработано как технологичное SPA.
+    </footer>
+
+    <script>
+        // БАЗА ДАННЫХ ТОВАРОВ С РЕАЛЬНЫМИ ПРЯМЫМИ ФОТОГРАФИЯМИ ИЗ UNSPLASH
+        const PRODUCTS_DB = [
+            {
+                id: 'prod-1',
+                title: 'Cyber Pro Laptop',
+                description: 'Флагманский ультрабук на базе ИИ-процессора нового поколения. 32GB RAM, OLED 120Hz дисплей и полностью алюминиевый корпус.',
+                price: 749000,
+                img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 'prod-2',
+                title: 'Quantum Phone X',
+                description: 'Камера 200 Мп с оптической стабилизацией, графеновый аккумулятор и экран со сверхтонкими рамками.',
+                price: 459000,
+                img: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 'prod-3',
+                title: 'Acoustic Neon Pods',
+                description: 'Полноразмерные беспроводные наушники с активным гибридным шумоподавлением и студийным качеством звука.',
+                price: 135000,
+                img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 'prod-4',
+                title: 'Chrono Smartwatch 4',
+                description: 'Мониторинг здоровья 24/7, встроенный GPS-трекер, титановый безель и до 14 дней автономной работы от одного заряда.',
+                price: 98000,
+                img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 'prod-5',
+                title: 'Matrix Mechanical Keyboard',
+                description: 'Механическая игровая клавиатура на кастомных смазанных свитчах с RGB-подсветкой и hot-swap системой.',
+                price: 42000,
+                img: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 'prod-6',
+                title: 'Streamer Pro Mic',
+                description: 'Конденсаторный студийный микрофон высокой четкости с кардиоидной диаграммой и встроенным поп-фильтром.',
+                price: 56000,
+                img: 'https://images.unsplash.com/photo-1590608897129-79da98d15969?auto=format&fit=crop&w=600&q=80'
+            }
+        ];
+
+        // СОСТОЯНИЕ ПРИЛОЖЕНИЯ (STATE)
+        let cart = [];
+
+        // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCatalog();
+            updateCartUI();
+        });
+
+        // КЛИЕНТСКИЙ РОУТИНГ (ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК)
+        function navigateTo(pageId) {
+            // Переключаем активные классы на страницах
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) targetPage.classList.add('active');
+
+            // Переключаем активные классы на кнопках навигации
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const targetBtn = document.getElementById(`btn-${pageId}`);
+            if (targetBtn) targetBtn.classList.add('active');
+
+            // Дополнительный рендер если переходим в корзину
+            if (pageId === 'cart') {
+                renderCart();
+            }
+
+            // Плавный скролл наверх страницы при переходе
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // РЕНДЕР КАТАЛОГА ТОВАРОВ
+        function renderCatalog() {
+            const container = document.getElementById('products-container');
+            container.innerHTML = PRODUCTS_DB.map(product => `
+                <div class="product-card">
+                    <div class="product-img-container">
+                        <img src="${product.img}" alt="${product.title}" class="product-img" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.title}</h3>
+                        <p class="product-desc">${product.description}</p>
+                        <div class="product-footer">
+                            <span class="product-price">${product.price.toLocaleString('ru-RU')} ₸</span>
+                            <button class="btn-add" onclick="addToCart('${product.id}')">В корзину</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ДОБАВЛЕНИЕ В КОРЗИНУ
+        function addToCart(productId) {
+            const product = PRODUCTS_DB.find(p => p.id === productId);
+            if (!product) return;
+
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    img: product.img,
+                    quantity: 1
+                });
+            }
+
+            showToast(`"${product.title}" добавлен в корзину!`);
+            updateCartUI();
+        }
+
+        // ИЗМЕНЕНИЕ КОЛИЧЕСТВА ТОВАРА В КОРЗИНЕ
+        function updateQuantity(productId, delta) {
+            const item = cart.find(item => item.id === productId);
+            if (!item) return;
+
+            item.quantity += delta;
+
+            if (item.quantity <= 0) {
+                removeFromCart(productId);
+            } else {
+                updateCartUI();
+                renderCart(); // Перерендериваем интерфейс корзины
+            }
+        }
+
+        // УДАЛЕНИЕ ИЗ КОРЗИНЫ
+        function removeFromCart(productId) {
+            const item = cart.find(item => item.id === productId);
+            cart = cart.filter(item => item.id !== productId);
+            if (item) {
+                showToast(`"${item.title}" удален из корзины`, 'error');
+            }
+            updateCartUI();
+            renderCart();
+        }
+
+        // ОБНОВЛЕНИЕ СЧЕТЧИКОВ В ШАПКЕ С АНИМАЦИЕЙ
+        function updateCartUI() {
+            const badge = document.getElementById('cart-counter-badge');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            if (totalItems > 0) {
+                badge.innerText = totalItems;
+                badge.classList.add('show');
+                
+                // Анимация толчка (bump) при изменении
+                badge.classList.remove('bump');
+                void badge.offsetWidth; // Магия триггера reflow для перезапуска CSS анимации
+                badge.classList.add('bump');
+            } else {
+                badge.classList.remove('show');
+                badge.innerText = '0';
+            }
+        }
+
+        // РЕНДЕР СТРАНИЦЫ КОРЗИНЫ И СУММЫ ЗАКАЗА
+        function renderCart() {
+            const root = document.getElementById('cart-content-root');
+
+            if (cart.length === 0) {
+                root.innerHTML = `
+                    <div class="empty-cart-message">
+                        <h3>Ваша корзина пуста</h3>
+                        <p>Похоже, вы еще ничего не добавили в заказ.</p>
+                        <button class="btn-back-to-shop" onclick="navigateTo('products')">Перейти к товарам</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            root.innerHTML = `
+                <div class="cart-wrapper">
+                    <!-- Список товаров -->
+                    <div class="cart-items-list">
+                        ${cart.map(item => `
+                            <div class="cart-item">
+                                <img src="${item.img}" alt="${item.title}" class="cart-item-img">
+                                <div class="cart-item-details">
+                                    <h4 class="cart-item-title">${item.title}</h4>
+                                    <span class="cart-item-price">${(item.price * item.quantity).toLocaleString('ru-RU')} ₸</span>
+                                </div>
+                                <!-- Управление количеством -->
+                                <div class="cart-counter">
+                                    <button class="counter-btn" onclick="updateQuantity('${item.id}', -1)">−</button>
+                                    <div class="counter-value">${item.quantity}</div>
+                                    <button class="counter-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
+                                </div>
+                                <button class="btn-remove" onclick="removeFromCart('${item.id}')">Удалить</button>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Итоговый Чек -->
+                    <div class="cart-summary">
+                        <h3 class="summary-title">Итого</h3>
+                        <div class="summary-row">
+                            <span>Количество товаров:</span>
+                            <span>${totalItems} шт.</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Доставка:</span>
+                            <span>Бесплатно</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>К оплате:</span>
+                            <span>${totalPrice.toLocaleString('ru-RU')} ₸</span>
+                        </div>
+                        <button class="btn-checkout" onclick="processCheckout()">Оформить заказ</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // СИМУЛЯЦИЯ ОФОРМЛЕНИЯ ЗАКАЗА
+        function processCheckout() {
+            showToast('Заказ успешно сформирован! Спасибо за покупку!', 'success');
+            cart = []; // Очищаем корзину
+            updateCartUI();
+            navigateTo('products'); // Возвращаем на главную товаров
+        }
+
+        // СИСТЕМА УВЕДОМЛЕНИЙ (TOASTS)
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-root');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type === 'error' ? 'error' : ''}`;
+            toast.innerHTML = `
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            // Удаляем тост через 3 секунды с анимацией угасания
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                toast.addEventListener('animationend', () => {
+                    toast.remove();
+                });
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
