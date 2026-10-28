@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа №8 — Вариант 3 (Кастомизация тем)</title>
+    <style>
+        /* CSS-переменные для тем оформления */
+        :root {
+            --bg-body: #f0f4f8;
+            --bg-card: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --border: #e2e8f0;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-size: 16px;
+        }
+
+        body.theme-dark {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #818cf8;
+            --accent-hover: #6366f1;
+            --border: #334155;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        body.theme-neon {
+            --bg-body: #05050a;
+            --bg-card: #121222;
+            --text-main: #00ffcc;
+            --text-muted: #ff007f;
+            --accent: #ff007f;
+            --accent-hover: #e60073;
+            --border: #00ffcc;
+            --shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            font-size: var(--font-size);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .main-container {
+            width: 90%;
+            max-width: 750px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* Баннер с картинкой из интернета, меняющейся динамически */
+        .hero-banner {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 30%, rgba(0, 0, 0, 0.75));
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .hero-overlay h1 {
+            margin: 0;
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .content-body {
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+        }
+
+        /* Карточки выбора тем с фотографиями */
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 550px) {
+            .theme-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .theme-card {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+            background-color: var(--bg-card);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .theme-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .theme-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .theme-card img {
+            width: 100%;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .theme-card span {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Настройки текста */
+        .controls-panel {
+            background: rgba(127, 127, 127, 0.04);
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            max-width: 280px;
+            accent-color: var(--accent);
+        }
+
+        select {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Блок предпросмотра */
+        .preview-box {
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px dashed var(--border);
+            background-color: var(--bg-card);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .footer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-reset {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-reset:hover {
+            opacity: 0.9;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body class="theme-light">
+
+    <div class="main-container">
+        <!-- Шапка с динамическим изображением из интернета -->
+        <div class="hero-banner" id="bannerImg">
+            <div class="hero-overlay">
+                <h1 id="bannerTitle">Светлая тема интерфейса</h1>
+            </div>
+        </div>
+
+        <div class="content-body">
+            
+            <!-- Выбор темы -->
+            <div class="section-title">🎨 Выберите тему оформления</div>
+            <div class="theme-grid">
+                <div class="theme-card active" data-theme="light" onclick="changeTheme('light')">
+                    <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=300&q=80" alt="Светлая">
+                    <span>Светлая пастель</span>
+                </div>
+                <div class="theme-card" data-theme="dark" onclick="changeTheme('dark')">
+                    <img src="https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=300&q=80" alt="Темная">
+                    <span>Глубокий космос</span>
+                </div>
+                <div class="theme-card" data-theme="neon" onclick="changeTheme('neon')">
+                    <img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=300&q=80" alt="Неон">
+                    <span>Киберпанк Неон</span>
+                </div>
+            </div>
+
+            <!-- Панель ползунков и шрифтов -->
+            <div class="section-title">⚙️ Тонкая настройка текста</div>
+            <div class="controls-panel">
+                <div class="control-row">
+                    <label for="fontSizeRange">Размер шрифта (<span id="sizeOutput">16px</span>):</label>
+                    <input type="range" id="fontSizeRange" min="12" max="26" value="16">
+                </div>
+
+                <div class="control-row">
+                    <label for="fontFamilySelect">Семейство шрифта:</label>
+                    <select id="fontFamilySelect">
+                        <option value="'Segoe UI', sans-serif">Segoe UI (Современный)</option>
+                        <option value="Georgia, serif">Georgia (Классический)</option>
+                        <option value="'Courier New', monospace">Courier New (Моноширинный)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Блок интерактивного превью -->
+            <div class="section-title">📖 Живой предпросмотр</div>
+            <div class="preview-box" id="previewContainer">
+                <p style="margin: 0;"><b>Лабораторная работа №8:</b> Текст в этом блоке меняет свой размер и шрифт в реальном времени. Все выбранные вами настройки автоматически сохраняются в <code>localStorage</code> и будут восстановлены даже после перезагрузки страницы[cite: 1, 2]!</p>
+            </div>
+
+            <div class="footer-actions">
+                <button class="btn-reset" onclick="resetSettings()">Сбросить настройки</button>
+                <span class="status-badge" id="statusInfo">Сохранено в localStorage ✓</span>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Фотографии из интернета для баннера под каждую тему
+        const bannerImages = {
+            light: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=800&q=80",
+            dark: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80",
+            neon: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=800&q=80"
+        };
+
+        const bannerTitles = {
+            light: "Светлая тема интерфейса",
+            dark: "Темная тема интерфейса",
+            neon: "Неоновая кибер-тема"
+        };
+
+        const body = document.body;
+        const fontSizeRange = document.querySelector("#fontSizeRange");
+        const sizeOutput = document.querySelector("#sizeOutput");
+        const fontFamilySelect = document.querySelector("#fontFamilySelect");
+        const bannerImg = document.querySelector("#bannerImg");
+        const bannerTitle = document.querySelector("#bannerTitle");
+
+        // 1. Восстановление настроек из localStorage при загрузке страницы
+        const savedTheme = localStorage.getItem("lab8_theme") || "light";
+        const savedSize = localStorage.getItem("lab8_font_size") || "16";
+        const savedFont = localStorage.getItem("lab8_font_family") || "'Segoe UI', sans-serif";
+
+        // Установка сохраненных значений в элементы интерфейса
+        fontSizeRange.value = savedSize;
+        sizeOutput.textContent = savedSize + "px";
+        fontFamilySelect.value = savedFont;
+
+        applyTheme(savedTheme, false);
+        applyFontSize(savedSize);
+        applyFontFamily(savedFont);
+
+        // Функция применения темы
+        function applyTheme(themeName, save = true) {
+            body.className = "theme-" + themeName;
+
+            // Подсветка активной карточки
+            document.querySelectorAll(".theme-card").forEach(card => {
+                if (card.getAttribute("data-theme") === themeName) {
+                    card.classList.add("active");
+                } else {
+                    card.classList.remove("active");
+                }
+            });
+
+            // Смена картинки и заголовка баннера
+            bannerImg.style.backgroundImage = `url('${bannerImages[themeName]}')`;
+            bannerTitle.textContent = bannerTitles[themeName];
+
+            if (save) {
+                localStorage.setItem("lab8_theme", themeName);
+            }
+        }
+
+        function changeTheme(themeName) {
+            applyTheme(themeName, true);
+        }
+
+        // Применение размера шрифта
+        function applyFontSize(size) {
+            body.style.setProperty('--font-size', size + 'px');
+            sizeOutput.textContent = size + "px";
+        }
+
+        // Применение шрифта
+        function applyFontFamily(font) {
+            body.style.setProperty('--font-family', font);
+        }
+
+        // Слушатели событий
+        fontSizeRange.addEventListener("input", (e) => {
+            const size = e.target.value;
+            applyFontSize(size);
+            localStorage.setItem("lab8_font_size", size);
+        });
+
+        fontFamilySelect.addEventListener("change", (e) => {
+            const font = e.target.value;
+            applyFontFamily(font);
+            localStorage.setItem("lab8_font_family", font);
+        });
+
+        // Полный сброс параметров
+        function resetSettings() {
+            localStorage.removeItem("lab8_theme");
+            localStorage.removeItem("lab8_font_size");
+            localStorage.removeItem("lab8_font_family");
+
+            applyTheme("light", false);
+            fontSizeRange.value = 16;
+            applyFontSize(16);
+            fontFamilySelect.value = "'Segoe UI', sans-serif";
+            applyFontFamily("'Segoe UI', sans-serif");
+        }
+    </script>
+</body>
+</html>

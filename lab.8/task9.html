@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Финансовый трекер — Лабораторная работа №8 (Вариант 9)</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --bg-glass: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 850px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Баннер с изображением из интернета */
+        .hero-banner {
+            height: 200px;
+            background-image: url('https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, var(--bg-card), rgba(30, 41, 59, 0.2));
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 25px;
+        }
+
+        .hero-overlay h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #818cf8, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .budget-badge {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .budget-badge:hover { border-color: var(--primary); }
+
+        /* Контентная часть */
+        .content-body {
+            padding: 30px;
+        }
+
+        /* Дашборд с итогами и бюджетом */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 700px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        .card-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .card-box h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .total-sum {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0;
+            color: var(--success);
+        }
+
+        /* Прогресс-бар бюджета */
+        .progress-container {
+            margin-top: 10px;
+        }
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: var(--border);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--success);
+            transition: width 0.4s ease, background 0.4s ease;
+        }
+
+        /* Секция ввода */
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .categories-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .cat-btn {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .cat-btn:hover { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
+        .cat-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.5fr auto;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 700px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        input, select {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 15px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-add:hover { background: var(--primary-hover); }
+        .btn-add:active { transform: scale(0.98); }
+
+        /* Фильтры и таблица */
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: gap;
+            gap: 10px;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            font-size: 13px;
+            border-radius: 8px;
+        }
+
+        .table-container {
+            max-height: 280px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: rgba(15, 23, 42, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.8);
+            color: var(--text-muted);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(8px);
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+        .badge {
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .btn-delete:hover { background: var(--danger); color: white; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        /* Уведомление-тост */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        #toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Шапка с фоном -->
+        <div class="hero-banner">
+            <div class="hero-overlay">
+                <h1>💎 Учет финансов & Расходов</h1>
+                <div class="budget-badge" onclick="changeBudgetLimit()">
+                    🎯 Лимит: <span id="budgetDisplay">150 000</span> ₸
+                </div>
+            </div>
+        </div>
+
+        <div class="content-body">
+            
+            <!-- Дашборд -->
+            <div class="dashboard-grid">
+                <div class="card-box">
+                    <h3>Общая сумма расходов</h3>
+                    <p class="total-sum"><span id="totalAmount">0</span> ₸</p>
+                    <p style="margin: 6px 0 0 0; font-size: 12px; color: var(--text-muted);">Записей в LocalStorage: <span id="countRecords">0</span></p>
+                </div>
+                <div class="card-box">
+                    <h3>Использование бюджета</h3>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600;">
+                        <span>Остаток</span>
+                        <span id="budgetLeft">150 000 ₸</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Выбор категории -->
+            <div class="section-title">📂 Категория расхода</div>
+            <div class="categories-grid">
+                <div class="cat-btn active" onclick="selectCat('🍔 Еда', this)">🍔 Еда</div>
+                <div class="cat-btn" onclick="selectCat('🚗 Транспорт', this)">🚗 Транспорт</div>
+                <div class="cat-btn" onclick="selectCat('🏠 ЖКУ & Дом', this)">🏠 Дом</div>
+                <div class="cat-btn" onclick="selectCat('🎉 Досуг', this)">🎉 Досуг</div>
+                <div class="cat-btn" onclick="selectCat('💡 Прочее', this)">💡 Прочее</div>
+            </div>
+
+            <!-- Форма ввода -->
+            <div class="section-title">✍️ Новая операция</div>
+            <div class="form-row">
+                <input type="number" id="amountInput" placeholder="Сумма (₸)">
+                <input type="date" id="dateInput">
+                <input type="text" id="noteInput" placeholder="Примечание (необязательно)">
+                <button class="btn-add" onclick="addExpense()">Добавить</button>
+            </div>
+
+            <!-- Панель фильтрации и таблица -->
+            <div class="table-toolbar">
+                <div class="section-title" style="margin: 0;">📋 История операций</div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <select class="filter-select" id="filterCategory" onchange="render()">
+                        <option value="ALL">Все категории</option>
+                        <option value="🍔 Еда">🍔 Еда</option>
+                        <option value="🚗 Транспорт">🚗 Транспорт</option>
+                        <option value="🏠 ЖКУ & Дом">🏠 ЖКУ & Дом</option>
+                        <option value="🎉 Досуг">🎉 Досуг</option>
+                        <option value="💡 Прочее">💡 Прочее</option>
+                    </select>
+                    <button onclick="clearAllData()" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;">Очистить всё</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Категория</th>
+                            <th>Сумма</th>
+                            <th>Дата</th>
+                            <th>Примечание</th>
+                            <th style="text-align: right;">Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Динамический контент -->
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Всплывающее уведомление -->
+    <div id="toast">Операция успешно сохранена!</div>
+
+    <script>
+        const STORAGE_KEY = "lab8_variant9_pro_expenses";
+        const BUDGET_KEY = "lab8_variant9_budget";
+
+        let currentCategory = "🍔 Еда";
+        let expenses = [];
+        let monthlyBudget = Number(localStorage.getItem(BUDGET_KEY)) || 150000;
+
+        const amountInput = document.querySelector("#amountInput");
+        const dateInput = document.querySelector("#dateInput");
+        const noteInput = document.querySelector("#noteInput");
+        const tableBody = document.querySelector("#tableBody");
+        const totalAmountSpan = document.querySelector("#totalAmount");
+        const countRecordsSpan = document.querySelector("#countRecords");
+        const budgetDisplay = document.querySelector("#budgetDisplay");
+        const budgetLeft = document.querySelector("#budgetLeft");
+        const progressFill = document.querySelector("#progressFill");
+        const filterCategory = document.querySelector("#filterCategory");
+        const toast = document.querySelector("#toast");
+
+        // Устанавливаем сегодняшнюю дату по умолчанию
+        dateInput.valueAsDate = new Date();
+        budgetDisplay.textContent = monthlyBudget.toLocaleString();
+
+        // Безопасная загрузка данных из localStorage с использованием JSON.parse() и try/catch (требование лабораторной)
+        try {
+            const rawData = localStorage.getItem(STORAGE_KEY);
+            expenses = rawData ? JSON.parse(rawData) : [];
+            if (!Array.isArray(expenses)) expenses = [];
+        } catch (error) {
+            console.error("Ошибка поврежденного JSON в localStorage:", error);
+            expenses = [];
+            showToast("Ошибка чтения данных. База сброшена.", "var(--danger)");
+        }
+
+        function selectCat(catName, element) {
+            document.querySelectorAll(".cat-btn").forEach(btn => btn.classList.remove("active"));
+            element.classList.add("active");
+            currentCategory = catName;
+        }
+
+        function showToast(text, bg = "var(--success)") {
+            toast.textContent = text;
+            toast.style.background = bg;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 2500);
+        }
+
+        function render() {
+            tableBody.replaceChildren();
+            let total = 0;
+            const filterVal = filterCategory.value;
+
+            // Фильтрация массива
+            const filteredExpenses = expenses.filter(item => {
+                if (filterVal === "ALL") return true;
+                return item.category === filterVal;
+            });
+
+            if (expenses.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="empty-state">Список расходов пуст. Добавьте первую запись!</td></tr>`;
+            } else if (filteredExpenses.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="empty-state">В этой категории нет записей.</td></tr>`;
+            }
+
+            filteredExpenses.forEach((item, index) => {
+                // Находим реальный индекс в общем массиве expenses
+                const realIndex = expenses.indexOf(item);
+                const amountNum = Number(item.amount) || 0;
+                total += amountNum;
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><span class="badge">${item.category}</span></td>
+                    <td><b>${amountNum.toLocaleString()} ₸</b></td>
+                    <td>${item.date}</td>
+                    <td style="color: var(--text-muted);">${item.note || '—'}</td>
+                    <td style="text-align: right;">
+                        <button class="btn-delete" onclick="deleteExpense(${realIndex})">Удалить</button>
+                    </td>
+                `;
+                tableBody.append(tr);
+            });
+
+            // Общая сумма по всем расходам
+            const grandTotal = expenses.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+            totalAmountSpan.textContent = grandTotal.toLocaleString();
+            countRecordsSpan.textContent = expenses.length;
+
+            // Обновление бюджета и прогресс-бара
+            const left = monthlyBudget - grandTotal;
+            budgetLeft.textContent = left.toLocaleString() + " ₸";
+            
+            const percent = Math.min(Math.round((grandTotal / monthlyBudget) * 100), 100);
+            progressFill.style.width = percent + "%";
+            
+            if (percent > 85) {
+                progressFill.style.background = "var(--danger)";
+            } else if (percent > 60) {
+                progressFill.style.background = "var(--warning)";
+            } else {
+                progressFill.style.background = "var(--success)";
+            }
+        }
+
+        function saveAndRender() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
+                render();
+            } catch (e) {
+                console.error("Ошибка сохранения в localStorage", e);
+                showToast("Не удалось сохранить данные!", "var(--danger)");
+            }
+        }
+
+        function addExpense() {
+            const amountVal = amountInput.value.trim();
+            const dateVal = dateInput.value;
+            const noteVal = noteInput.value.trim();
+
+            if (!amountVal || !dateVal || Number(amountVal) <= 0) {
+                alert("Пожалуйста, введите корректную сумму и укажите дату!");
+                return;
+            }
+
+            expenses.push({
+                category: currentCategory,
+                amount: parseFloat(amountVal),
+                date: dateVal,
+                note: noteVal
+            });
+
+            amountInput.value = "";
+            noteInput.value = "";
+            dateInput.valueAsDate = new Date();
+
+            saveAndRender();
+            showToast("Расход успешно добавлен!");
+        }
+
+        function deleteExpense(index) {
+            expenses.splice(index, 1);
+            saveAndRender();
+            showToast("Запись удалена", "var(--danger)");
+        }
+
+        function clearAllData() {
+            if (confirm("Вы уверены, что хотите удалить все сохраненные операции?")) {
+                expenses = [];
+                localStorage.removeItem(STORAGE_KEY);
+                render();
+                showToast("Хранилище очищено", "var(--danger)");
+            }
+        }
+
+        function changeBudgetLimit() {
+            const newBudget = prompt("Введите новый лимит месячного бюджета (₸):", monthlyBudget);
+            if (newBudget !== null && !isNaN(newBudget) && Number(newBudget) > 0) {
+                monthlyBudget = Number(newBudget);
+                localStorage.setItem(BUDGET_KEY, monthlyBudget);
+                budgetDisplay.textContent = monthlyBudget.toLocaleString();
+                render();
+                showToast("Лимит бюджета обновлен!");
+            }
+        }
+
+        // Первичный запуск отрисовки
+        render();
+    </script>
+</body>
+</html>
