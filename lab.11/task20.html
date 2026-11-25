@@ -1,0 +1,1947 @@
+<html lang="ru" data-theme="dark"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GourmetCraft — Лабораторная работа № 11 (Вариант 20)</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;600;700&amp;display=swap" rel="stylesheet">
+  
+    <script crossorigin="" src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin="" src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+    <style>
+      :root {
+        --bg-primary: #0b0f19;
+        --bg-secondary: #131a2a;
+        --bg-card: rgba(19, 26, 42, 0.85);
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: rgba(148, 163, 184, 0.16);
+        --accent: #f97316;
+        --accent-hover: #ea580c;
+        --success: #10b981;
+        --danger: #ef4444;
+        --shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.5);
+      }
+  
+      [data-theme="light"] {
+        --bg-primary: #f8fafc;
+        --bg-secondary: #ffffff;
+        --bg-card: rgba(255, 255, 255, 0.96);
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --border-color: rgba(15, 23, 42, 0.1);
+        --accent: #ea580c;
+        --accent-hover: #c2410c;
+        --shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.08);
+      }
+  
+      [data-theme="emerald"] {
+        --bg-primary: #041511;
+        --bg-secondary: #08241d;
+        --bg-card: rgba(8, 36, 29, 0.88);
+        --text-primary: #ecfdf5;
+        --text-secondary: #6ee7b7;
+        --border-color: rgba(16, 185, 129, 0.25);
+        --accent: #10b981;
+        --accent-hover: #059669;
+        --shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.55);
+      }
+  
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+  
+      /* Шапка */
+      header {
+        background: var(--bg-card);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--border-color);
+        padding: 16px 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        position: sticky;
+        top: 0;
+        z-index: 30;
+      }
+  
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+        font-size: 21px;
+      }
+  
+      .logo-badge {
+        background: var(--accent);
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+  
+      .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+  
+      .theme-group {
+        display: flex;
+        background: var(--bg-primary);
+        padding: 4px;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+      }
+  
+      .theme-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        padding: 6px 12px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+  
+      .theme-btn.active {
+        background: var(--accent);
+        color: #ffffff;
+      }
+  
+      /* Основной макет */
+      main {
+        max-width: 1360px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 28px 20px;
+        flex: 1;
+      }
+  
+      .workspace {
+        display: grid;
+        grid-template-columns: 1fr 390px;
+        gap: 28px;
+        align-items: start;
+        margin-bottom: 48px;
+      }
+  
+      @media (max-width: 1024px) {
+        .workspace { grid-template-columns: 1fr; }
+      }
+  
+      /* Панель фильтров и поиска */
+      .toolbar {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 18px;
+        padding: 18px 22px;
+        margin-bottom: 24px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: var(--shadow);
+      }
+  
+      .categories {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+  
+      .cat-btn {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+  
+      .cat-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+  
+      .search-box {
+        display: flex;
+        gap: 10px;
+        flex: 1;
+        min-width: 240px;
+        justify-content: flex-end;
+      }
+  
+      .search-input, .sort-select {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 9px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        outline: none;
+      }
+  
+      .search-input { width: 100%; max-width: 240px; }
+      .search-input:focus { border-color: var(--accent); }
+  
+      /* Сетка меню */
+      .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+        gap: 22px;
+      }
+  
+      .dish-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: var(--shadow);
+        transition: transform 0.25s ease, border-color 0.25s ease;
+      }
+  
+      .dish-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent);
+      }
+  
+      .dish-img-wrap {
+        position: relative;
+        width: 100%;
+        height: 185px;
+        background: var(--bg-primary);
+        overflow: hidden;
+      }
+  
+      .dish-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+  
+      .dish-card:hover .dish-img {
+        transform: scale(1.06);
+      }
+  
+      .dish-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: rgba(15, 23, 42, 0.78);
+        backdrop-filter: blur(6px);
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+  
+      .dish-kcal {
+        position: absolute;
+        bottom: 10px;
+        right: 12px;
+        background: rgba(15, 23, 42, 0.78);
+        color: #cbd5e1;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-family: 'JetBrains Mono', monospace;
+      }
+  
+      .dish-body {
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+  
+      .dish-title {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+  
+      .dish-desc {
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.45;
+        margin-bottom: 14px;
+        flex: 1;
+      }
+  
+      /* Кастомизация блюда (опции) */
+      .options-box {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 10px 12px;
+        margin-bottom: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+  
+      .size-row {
+        display: flex;
+        gap: 6px;
+      }
+  
+      .size-btn {
+        flex: 1;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 5px 0;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+  
+      .size-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+  
+      .addon-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        user-select: none;
+      }
+  
+      .addon-label input {
+        accent-color: var(--accent);
+        margin-right: 6px;
+      }
+  
+      .dish-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 10px;
+        border-top: 1px solid var(--border-color);
+      }
+  
+      .dish-price {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 18px;
+        font-weight: 700;
+      }
+  
+      .btn-add {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 9px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+      }
+  
+      .btn-add:hover { background: var(--accent-hover); }
+      .btn-add:active { transform: scale(0.96); }
+  
+      /* Корзина / Конструктор заказа */
+      .order-panel {
+        background: var(--bg-card);
+        backdrop-filter: blur(14px);
+        border: 1px solid var(--border-color);
+        border-radius: 22px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 88px;
+      }
+  
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border-color);
+      }
+  
+      .order-header h2 {
+        font-size: 19px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+  
+      .btn-clear {
+        background: transparent;
+        border: none;
+        color: var(--danger);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+  
+      .empty-cart {
+        text-align: center;
+        padding: 36px 12px;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+  
+      .order-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-height: 360px;
+        overflow-y: auto;
+        margin-bottom: 18px;
+        padding-right: 4px;
+      }
+  
+      .order-item {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 12px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+  
+      .order-item-img {
+        width: 52px;
+        height: 52px;
+        border-radius: 10px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+  
+      .order-item-info {
+        flex: 1;
+        min-width: 0;
+      }
+  
+      .order-item-title {
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+  
+      .order-item-meta {
+        font-size: 11px;
+        color: var(--text-secondary);
+        margin-top: 2px;
+      }
+  
+      .order-item-price {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--accent);
+        margin-top: 4px;
+      }
+  
+      .qty-controls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 3px 6px;
+      }
+  
+      .qty-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-primary);
+        font-weight: 700;
+        font-size: 15px;
+        width: 22px;
+        height: 22px;
+        cursor: pointer;
+      }
+  
+      .qty-val {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        min-width: 18px;
+        text-align: center;
+      }
+  
+      /* Промокод и итоги */
+      .promo-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+  
+      .promo-input {
+        flex: 1;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 9px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        outline: none;
+      }
+  
+      .btn-promo {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 0 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+  
+      .btn-promo:hover { border-color: var(--accent); }
+  
+      .summary-box {
+        border-top: 1px solid var(--border-color);
+        padding-top: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 14px;
+      }
+  
+      .summary-line {
+        display: flex;
+        justify-content: space-between;
+        color: var(--text-secondary);
+      }
+  
+      .summary-total {
+        display: flex;
+        justify-content: space-between;
+        font-size: 19px;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-top: 6px;
+        padding-top: 10px;
+        border-top: 1px dashed var(--border-color);
+      }
+  
+      .btn-checkout {
+        width: 100%;
+        margin-top: 16px;
+        background: var(--success);
+        color: #fff;
+        border: none;
+        padding: 13px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+  
+      .btn-checkout:hover { opacity: 0.92; }
+  
+      .toast-msg {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        text-align: center;
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+  
+      /* Форма добавления своего блюда */
+      .custom-dish-bar {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 18px;
+        padding: 20px 24px;
+        margin-bottom: 36px;
+        box-shadow: var(--shadow);
+      }
+  
+      .custom-dish-bar h3 {
+        font-size: 16px;
+        margin-bottom: 14px;
+      }
+  
+      .custom-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 12px;
+        align-items: end;
+      }
+  
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+  
+      .field label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+      }
+  
+      .field input, .field select {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 9px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        outline: none;
+      }
+  
+      /* Отчет для защиты */
+      .report-section {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+      }
+  
+      .report-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+      }
+  
+      .report-content {
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border-color);
+      }
+  
+      .arch-box {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        overflow-x: auto;
+      }
+  
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        text-align: left;
+      }
+  
+      th, td {
+        padding: 11px 12px;
+        border-bottom: 1px solid var(--border-color);
+      }
+  
+      th {
+        color: var(--text-secondary);
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+  
+      .status-pass {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 12px;
+      }
+  
+      footer {
+        text-align: center;
+        padding: 20px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        border-top: 1px solid var(--border-color);
+        margin-top: 40px;
+      }
+    </style>
+  <script>function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+  function _toConsumableArray(a) { return _arrayWithoutHoles(a) || _iterableToArray(a) || _unsupportedIterableToArray(a) || _nonIterableSpread(); }
+  function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+  function _iterableToArray(r) { var e = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (Array.isArray(r) && (null == e || e === ("undefined" != typeof Symbol && [][Symbol.iterator]) || e === []["@@iterator"])) return r; if (null != e) { for (var t, o = [], a = e.call(r); !(t = a.next()).done;) o.push(t.value); return o; } }
+  function _arrayWithoutHoles(a) { if (Array.isArray(a)) return _arrayLikeToArray(a); }
+  function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+  function _objectSpread(r) { for (var t = 1; t < arguments.length; t++) { var o = null != arguments[t] ? arguments[t] : {}; t % 2 ? ownKeys(Object(o), !0).forEach(function (t) { _defineProperty(r, t, o[t]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(r, Object.getOwnPropertyDescriptors(o)) : ownKeys(Object(o)).forEach(function (e) { Object.defineProperty(r, e, Object.getOwnPropertyDescriptor(o, e)); }); } return r; }
+  function _defineProperty(r, t, o) { return (t = _toPropertyKey(t)) in r ? Object.defineProperty(r, t, { value: o, enumerable: !0, configurable: !0, writable: !0 }) : r[t] = o, r; }
+  function _toPropertyKey(r) { var o = _toPrimitive(r, "string"); return "symbol" == _typeof(o) ? o : o + ""; }
+  function _toPrimitive(t, e) { if ("object" != _typeof(t) || !t) return t; var r; if ("undefined" != typeof Symbol && void 0 !== (r = t[Symbol.toPrimitive])) { var i = r.call(t, e || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === e ? String : Number)(t); }
+  function _slicedToArray(e, i) { return _iterableToArrayLimit(e, i) || _unsupportedIterableToArray(e, i) || _nonIterableRest(); }
+  function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+  function _unsupportedIterableToArray(t, e) { if (t) { if ("string" == typeof t) return _arrayLikeToArray(t, e); var o = {}.toString.call(t).slice(8, -1); return "Object" === o && t.constructor && (o = t.constructor.name), "Map" === o || "Set" === o ? Array.from(t) : "Arguments" === o || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(o) ? _arrayLikeToArray(t, e) : void 0; } }
+  function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+  function _iterableToArrayLimit(r, t) { var e = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (Array.isArray(r) && (null == e || e === ("undefined" != typeof Symbol && [][Symbol.iterator]) || e === []["@@iterator"])) return r; if (null != e) { var l, n, i, a, u = [], o = !0, f = !1; try { if (i = (e = e.call(r)).next, 0 === t) { if (Object(e) !== e) return; o = !1; } else for (; !(o = (l = i.call(e)).done) && (u.push(l.value), u.length !== t); o = !0); } catch (r) { f = !0, n = r; } finally { try { if (!o && null != e["return"] && (a = e["return"](), Object(a) !== a)) return; } finally { if (f) throw n; } } return u; } }
+  var _React = React,
+    useState = _React.useState,
+    useEffect = _React.useEffect;
+  
+  // Исходный каталог блюд с фотографиями из интернета (Unsplash)
+  var INITIAL_MENU = [{
+    id: 1,
+    name: 'Бургер «Черный Ангус»',
+    category: 'Бургеры',
+    price: 2890,
+    kcal: 680,
+    desc: 'Мраморная говядина на гриле, выдержанный чеддер, карамелизированный лук и фирменный соус.',
+    image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=700&q=80',
+    addonName: 'Двойной бекон и сыр',
+    addonPrice: 550
+  }, {
+    id: 2,
+    name: 'Пицца «Маргарита Неаполитана»',
+    category: 'Пицца',
+    price: 3200,
+    kcal: 820,
+    desc: 'Тонкое тесто на закваске, томаты Сан-Марцано, свежая моцарелла и листья базилика.',
+    image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=700&q=80',
+    addonName: 'Сырный бортик',
+    addonPrice: 650
+  }, {
+    id: 3,
+    name: 'Ролл «Филадельфия Премиум»',
+    category: 'Роллы',
+    price: 3450,
+    kcal: 490,
+    desc: 'Охлажденный норвежский лосось, сливочный сыр, спелый авокадо и хрустящий огурец.',
+    image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=700&q=80',
+    addonName: 'Икра тобико и унаги',
+    addonPrice: 490
+  }, {
+    id: 4,
+    name: 'Паста «Карбонара»',
+    category: 'Горячее',
+    price: 2650,
+    kcal: 610,
+    desc: 'Спагетти аль денте, хрустящая панчетта, соус из желтков и тертый пармезан 24 мес.',
+    image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=700&q=80',
+    addonName: 'Трюфельное масло',
+    addonPrice: 450
+  }, {
+    id: 5,
+    name: 'Салат «Цезарь с цыпленком»',
+    category: 'Салаты',
+    price: 2190,
+    kcal: 380,
+    desc: 'Листья романо, куриное филе су-вид, чесночные крутоны, пармезан и классический соус.',
+    image: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&w=700&q=80',
+    addonName: 'Тигровые креветки',
+    addonPrice: 790
+  }, {
+    id: 6,
+    name: 'Десерт «Тирамису Классик»',
+    category: 'Десерты',
+    price: 1750,
+    kcal: 410,
+    desc: 'Воздушный крем на основе маскарпоне, печенье савоярди, пропитанное эспрессо, и какао.',
+    image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=700&q=80',
+    addonName: 'Шарик пломбира',
+    addonPrice: 350
+  }];
+  
+  // Звуковой отклик
+  function playTone() {
+    var freq = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 540;
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.08);
+    } catch (e) {}
+  }
+  
+  // Дочерний компонент 1: Карточка блюда (MenuItem)
+  // Получает объект блюда через props и передает событие выбора родителю
+  function MenuItem(_ref) {
+    var dish = _ref.dish,
+      onAddToOrder = _ref.onAddToOrder;
+    var _useState = useState('Стандарт'),
+      _useState2 = _slicedToArray(_useState, 2),
+      size = _useState2[0],
+      setSize = _useState2[1];
+    var _useState3 = useState(false),
+      _useState4 = _slicedToArray(_useState3, 2),
+      withAddon = _useState4[0],
+      setWithAddon = _useState4[1];
+  
+    // Расчет итоговой цены конкретной конфигурации
+    var sizeMultiplier = size === 'Большая (XL)' ? 1.25 : 1;
+    var finalPrice = Math.round(dish.price * sizeMultiplier) + (withAddon ? dish.addonPrice : 0);
+    var handleAdd = function handleAdd() {
+      playTone(640);
+      onAddToOrder({
+        key: "".concat(dish.id, "-").concat(size, "-").concat(withAddon),
+        id: dish.id,
+        name: dish.name,
+        image: dish.image,
+        size: size,
+        addon: withAddon ? dish.addonName : null,
+        unitPrice: finalPrice
+      });
+    };
+    return /*#__PURE__*/React.createElement("article", {
+      className: "dish-card"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "dish-img-wrap"
+    }, /*#__PURE__*/React.createElement("img", {
+      className: "dish-img",
+      src: dish.image,
+      alt: dish.name,
+      onError: function onError(e) {
+        e.target.src = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=700&q=80';
+      }
+    }), /*#__PURE__*/React.createElement("span", {
+      className: "dish-badge"
+    }, dish.category), /*#__PURE__*/React.createElement("span", {
+      className: "dish-kcal"
+    }, dish.kcal, " \u043A\u043A\u0430\u043B")), /*#__PURE__*/React.createElement("div", {
+      className: "dish-body"
+    }, /*#__PURE__*/React.createElement("h3", {
+      className: "dish-title"
+    }, dish.name), /*#__PURE__*/React.createElement("p", {
+      className: "dish-desc"
+    }, dish.desc), /*#__PURE__*/React.createElement("div", {
+      className: "options-box"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "size-row"
+    }, ['Стандарт', 'Большая (XL)'].map(function (s) {
+      return /*#__PURE__*/React.createElement("button", {
+        key: s,
+        type: "button",
+        className: "size-btn ".concat(size === s ? 'active' : ''),
+        onClick: function onClick() {
+          return setSize(s);
+        }
+      }, s);
+    })), dish.addonName && /*#__PURE__*/React.createElement("label", {
+      className: "addon-label"
+    }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("input", {
+      type: "checkbox",
+      checked: withAddon,
+      onChange: function onChange(e) {
+        return setWithAddon(e.target.checked);
+      }
+    }), dish.addonName), /*#__PURE__*/React.createElement("strong", null, "+", dish.addonPrice, " \u20B8"))), /*#__PURE__*/React.createElement("div", {
+      className: "dish-footer"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "dish-price"
+    }, finalPrice.toLocaleString(), " \u20B8"), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "btn-add",
+      onClick: handleAdd
+    }, "+ \u0412 \u0437\u0430\u043A\u0430\u0437"))));
+  }
+  
+  // Дочерний компонент 2: Позиция в корзине заказа (OrderRow)
+  function OrderRow(_ref2) {
+    var item = _ref2.item,
+      onUpdateQty = _ref2.onUpdateQty;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "order-item"
+    }, /*#__PURE__*/React.createElement("img", {
+      className: "order-item-img",
+      src: item.image,
+      alt: item.name
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "order-item-info"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "order-item-title"
+    }, item.name), /*#__PURE__*/React.createElement("div", {
+      className: "order-item-meta"
+    }, item.size, item.addon ? " \u2022 + ".concat(item.addon) : ''), /*#__PURE__*/React.createElement("div", {
+      className: "order-item-price"
+    }, (item.unitPrice * item.qty).toLocaleString(), " \u20B8")), /*#__PURE__*/React.createElement("div", {
+      className: "qty-controls"
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "qty-btn",
+      onClick: function onClick() {
+        return onUpdateQty(item.key, -1);
+      }
+    }, "\u2212"), /*#__PURE__*/React.createElement("span", {
+      className: "qty-val"
+    }, item.qty), /*#__PURE__*/React.createElement("button", {
+      className: "qty-btn",
+      onClick: function onClick() {
+        return onUpdateQty(item.key, 1);
+      }
+    }, "+")));
+  }
+  
+  // Дочерний компонент 3: Форма добавления нового блюда в меню с фото по URL
+  function AddDishForm(_ref3) {
+    var onCreateDish = _ref3.onCreateDish;
+    var _useState5 = useState(''),
+      _useState6 = _slicedToArray(_useState5, 2),
+      name = _useState6[0],
+      setName = _useState6[1];
+    var _useState7 = useState('Бургеры'),
+      _useState8 = _slicedToArray(_useState7, 2),
+      category = _useState8[0],
+      setCategory = _useState8[1];
+    var _useState9 = useState(2500),
+      _useState0 = _slicedToArray(_useState9, 2),
+      price = _useState0[0],
+      setPrice = _useState0[1];
+    var _useState1 = useState(''),
+      _useState10 = _slicedToArray(_useState1, 2),
+      image = _useState10[0],
+      setImage = _useState10[1];
+    var _useState11 = useState(''),
+      _useState12 = _slicedToArray(_useState11, 2),
+      error = _useState12[0],
+      setError = _useState12[1];
+    var handleSubmit = function handleSubmit(e) {
+      e.preventDefault();
+      if (!name.trim()) {
+        setError('Введите название блюда.');
+        return;
+      }
+      var numPrice = Number(price);
+      if (isNaN(numPrice) || numPrice <= 0) {
+        setError('Укажите корректную цену больше 0.');
+        return;
+      }
+      setError('');
+      playTone(720);
+      onCreateDish({
+        id: Date.now(),
+        name: name.trim(),
+        category: category,
+        price: numPrice,
+        kcal: 520,
+        desc: 'Авторское блюдо, добавленное пользователем в интерактивное меню.',
+        image: image.trim() || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80',
+        addonName: 'Фирменный соус',
+        addonPrice: 350
+      });
+      setName('');
+      setImage('');
+    };
+    return /*#__PURE__*/React.createElement("section", {
+      className: "custom-dish-bar"
+    }, /*#__PURE__*/React.createElement("h3", null, "\uD83C\uDF73 \u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0441\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E \u0432 \u043A\u0430\u0442\u0430\u043B\u043E\u0433 (\u0441 \u0444\u043E\u0442\u043E \u0438\u0437 \u0438\u043D\u0442\u0435\u0440\u043D\u0435\u0442\u0430)"), /*#__PURE__*/React.createElement("form", {
+      className: "custom-form",
+      onSubmit: handleSubmit
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "field"
+    }, /*#__PURE__*/React.createElement("label", null, "\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0431\u043B\u044E\u0434\u0430"), /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      placeholder: "\u041D\u0430\u043F\u0440\u0438\u043C\u0435\u0440: \u0421\u0442\u0435\u0439\u043A \u0420\u0438\u0431\u0430\u0439",
+      value: name,
+      onChange: function onChange(e) {
+        return setName(e.target.value);
+      }
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "field"
+    }, /*#__PURE__*/React.createElement("label", null, "\u041A\u0430\u0442\u0435\u0433\u043E\u0440\u0438\u044F"), /*#__PURE__*/React.createElement("select", {
+      value: category,
+      onChange: function onChange(e) {
+        return setCategory(e.target.value);
+      }
+    }, /*#__PURE__*/React.createElement("option", {
+      value: "\u0411\u0443\u0440\u0433\u0435\u0440\u044B"
+    }, "\u0411\u0443\u0440\u0433\u0435\u0440\u044B"), /*#__PURE__*/React.createElement("option", {
+      value: "\u041F\u0438\u0446\u0446\u0430"
+    }, "\u041F\u0438\u0446\u0446\u0430"), /*#__PURE__*/React.createElement("option", {
+      value: "\u0420\u043E\u043B\u043B\u044B"
+    }, "\u0420\u043E\u043B\u043B\u044B"), /*#__PURE__*/React.createElement("option", {
+      value: "\u0413\u043E\u0440\u044F\u0447\u0435\u0435"
+    }, "\u0413\u043E\u0440\u044F\u0447\u0435\u0435"), /*#__PURE__*/React.createElement("option", {
+      value: "\u0421\u0430\u043B\u0430\u0442\u044B"
+    }, "\u0421\u0430\u043B\u0430\u0442\u044B"), /*#__PURE__*/React.createElement("option", {
+      value: "\u0414\u0435\u0441\u0435\u0440\u0442\u044B"
+    }, "\u0414\u0435\u0441\u0435\u0440\u0442\u044B"))), /*#__PURE__*/React.createElement("div", {
+      className: "field"
+    }, /*#__PURE__*/React.createElement("label", null, "\u0426\u0435\u043D\u0430 (\u20B8)"), /*#__PURE__*/React.createElement("input", {
+      type: "number",
+      value: price,
+      onChange: function onChange(e) {
+        return setPrice(e.target.value);
+      }
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "field"
+    }, /*#__PURE__*/React.createElement("label", null, "\u0421\u0441\u044B\u043B\u043A\u0430 \u043D\u0430 \u0444\u043E\u0442\u043E (URL)"), /*#__PURE__*/React.createElement("input", {
+      type: "url",
+      placeholder: "https://images.unsplash.com/...",
+      value: image,
+      onChange: function onChange(e) {
+        return setImage(e.target.value);
+      }
+    })), /*#__PURE__*/React.createElement("button", {
+      type: "submit",
+      className: "btn-add",
+      style: {
+        height: '38px'
+      }
+    }, "+ \u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0432 \u043C\u0435\u043D\u044E")), error && /*#__PURE__*/React.createElement("div", {
+      style: {
+        color: 'var(--danger)',
+        fontSize: '13px',
+        marginTop: '8px'
+      }
+    }, error));
+  }
+  
+  // Дочерний компонент 4: Встроенный отчет для защиты варианта № 20
+  function DefenseReport() {
+    var _useState13 = useState(false),
+      _useState14 = _slicedToArray(_useState13, 2),
+      open = _useState14[0],
+      setOpen = _useState14[1];
+    var tests = [{
+      id: 1,
+      type: 'Начальное состояние',
+      action: 'Открытие страницы',
+      expected: 'Отображаются 6 блюд с фото, корзина пуста (0 ₸)',
+      actual: 'Меню загружено, счетчик 0 шт., итог 0 ₸',
+      status: 'Пройден'
+    }, {
+      id: 2,
+      type: 'Основное действие',
+      action: 'Выбор размера XL и клик «+ В заказ»',
+      expected: 'Блюдо добавлено в правую панель, сумма пересчитана',
+      actual: 'Позиция появилась в заказе, цена ×1.25 учтена',
+      status: 'Пройден'
+    }, {
+      id: 3,
+      type: 'Повторное действие',
+      action: 'Увеличение количества (+) и ввод промокода LAB11',
+      expected: 'Количество растет, применяется скидка 15%',
+      actual: 'Итоговая стоимость пересчитана со скидкой',
+      status: 'Пройден'
+    }, {
+      id: 4,
+      type: 'Сброс / отмена',
+      action: 'Уменьшение количества до 0 или «Очистить»',
+      expected: 'Позиция удаляется из state родителя',
+      actual: 'Список очищен, итоговая сумма равна 0 ₸',
+      status: 'Пройден'
+    }, {
+      id: 5,
+      type: 'Граничный / пустой ввод',
+      action: 'Отправка пустого названия блюда или неверного промокода',
+      expected: 'Вывод сообщения об ошибке без падения интерфейса',
+      actual: 'Ошибка корректно отображается пользователю',
+      status: 'Пройден'
+    }];
+    return /*#__PURE__*/React.createElement("section", {
+      className: "report-section"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "report-header",
+      onClick: function onClick() {
+        return setOpen(!open);
+      }
+    }, /*#__PURE__*/React.createElement("h3", null, "\uD83D\uDCCB \u041E\u0442\u0447\u0435\u0442 \u0434\u043B\u044F \u0437\u0430\u0449\u0438\u0442\u044B (\u041B\u0430\u0431\u043E\u0440\u0430\u0442\u043E\u0440\u043D\u0430\u044F \u0440\u0430\u0431\u043E\u0442\u0430 \u2116 11 \u2022 \u0412\u0430\u0440\u0438\u0430\u043D\u0442 \u2116 20)"), /*#__PURE__*/React.createElement("span", null, open ? '▲ Свернуть' : '▼ Показать схему и тесты')), open && /*#__PURE__*/React.createElement("div", {
+      className: "report-content"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "arch-box"
+    }, /*#__PURE__*/React.createElement("strong", null, "\u041F\u043E\u0442\u043E\u043A\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 (Props \u0438 State) \u043F\u043E \u0412\u0430\u0440\u0438\u0430\u043D\u0442\u0443 \u2116 20 \xAB\u041A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0442\u043E\u0440 \u0437\u0430\u043A\u0430\u0437\u0430\xBB:"), /*#__PURE__*/React.createElement("br", null), "App (state: menu[], orderItems[], category, search, promoDiscount, theme)", /*#__PURE__*/React.createElement("br", null), "\u251C\u2500\u2500 MenuItem (props: dish, onAddToOrder | state: size, withAddon)", /*#__PURE__*/React.createElement("br", null), "\u251C\u2500\u2500 OrderRow (props: item, onUpdateQty)", /*#__PURE__*/React.createElement("br", null), "\u2514\u2500\u2500 AddDishForm (props: onCreateDish | state: name, category, price, image, error)"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        overflowX: 'auto'
+      }
+    }, /*#__PURE__*/React.createElement("table", null, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "\u2116"), /*#__PURE__*/React.createElement("th", null, "\u0421\u0446\u0435\u043D\u0430\u0440\u0438\u0439"), /*#__PURE__*/React.createElement("th", null, "\u0414\u0435\u0439\u0441\u0442\u0432\u0438\u0435"), /*#__PURE__*/React.createElement("th", null, "\u041E\u0436\u0438\u0434\u0430\u0435\u043C\u044B\u0439 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442"), /*#__PURE__*/React.createElement("th", null, "\u0424\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u0439 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442"), /*#__PURE__*/React.createElement("th", null, "\u0421\u0442\u0430\u0442\u0443\u0441"))), /*#__PURE__*/React.createElement("tbody", null, tests.map(function (t) {
+      return /*#__PURE__*/React.createElement("tr", {
+        key: t.id
+      }, /*#__PURE__*/React.createElement("td", null, t.id), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("strong", null, t.type)), /*#__PURE__*/React.createElement("td", null, t.action), /*#__PURE__*/React.createElement("td", null, t.expected), /*#__PURE__*/React.createElement("td", null, t.actual), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("span", {
+        className: "status-pass"
+      }, t.status)));
+    }))))));
+  }
+  
+  // Родительский компонент App
+  function App() {
+    var _useState15 = useState('dark'),
+      _useState16 = _slicedToArray(_useState15, 2),
+      theme = _useState16[0],
+      setTheme = _useState16[1];
+    var _useState17 = useState(INITIAL_MENU),
+      _useState18 = _slicedToArray(_useState17, 2),
+      menu = _useState18[0],
+      setMenu = _useState18[1];
+    var _useState19 = useState('Все'),
+      _useState20 = _slicedToArray(_useState19, 2),
+      activeCategory = _useState20[0],
+      setActiveCategory = _useState20[1];
+    var _useState21 = useState(''),
+      _useState22 = _slicedToArray(_useState21, 2),
+      searchQuery = _useState22[0],
+      setSearchQuery = _useState22[1];
+    var _useState23 = useState('default'),
+      _useState24 = _slicedToArray(_useState23, 2),
+      sortBy = _useState24[0],
+      setSortBy = _useState24[1];
+  
+    // Состояние заказа (хранится в родителе по условию варианта 20)
+    var _useState25 = useState([]),
+      _useState26 = _slicedToArray(_useState25, 2),
+      orderItems = _useState26[0],
+      setOrderItems = _useState26[1];
+    var _useState27 = useState(''),
+      _useState28 = _slicedToArray(_useState27, 2),
+      promoCode = _useState28[0],
+      setPromoCode = _useState28[1];
+    var _useState29 = useState(0),
+      _useState30 = _slicedToArray(_useState29, 2),
+      discountPercent = _useState30[0],
+      setDiscountPercent = _useState30[1];
+    var _useState31 = useState(''),
+      _useState32 = _slicedToArray(_useState31, 2),
+      orderSuccess = _useState32[0],
+      setOrderSuccess = _useState32[1];
+    useEffect(function () {
+      document.documentElement.setAttribute('data-theme', theme);
+    }, [theme]);
+  
+    // Добавление или увеличение позиции в заказе
+    var handleAddToOrder = function handleAddToOrder(newItem) {
+      setOrderSuccess('');
+      setOrderItems(function (prev) {
+        var existing = prev.find(function (i) {
+          return i.key === newItem.key;
+        });
+        if (existing) {
+          return prev.map(function (i) {
+            return i.key === newItem.key ? _objectSpread(_objectSpread({}, i), {}, {
+              qty: i.qty + 1
+            }) : i;
+          });
+        }
+        return [].concat(_toConsumableArray(prev), [_objectSpread(_objectSpread({}, newItem), {}, {
+          qty: 1
+        })]);
+      });
+    };
+  
+    // Изменение количества в корзине
+    var handleUpdateQty = function handleUpdateQty(key, delta) {
+      playTone(delta > 0 ? 580 : 420);
+      setOrderItems(function (prev) {
+        return prev.map(function (item) {
+          return item.key === key ? _objectSpread(_objectSpread({}, item), {}, {
+            qty: item.qty + delta
+          }) : item;
+        }).filter(function (item) {
+          return item.qty > 0;
+        });
+      });
+    };
+  
+    // Применение промокода
+    var applyPromo = function applyPromo() {
+      if (promoCode.trim().toUpperCase() === 'LAB11') {
+        playTone(760);
+        setDiscountPercent(15);
+      } else {
+        playTone(300);
+        setDiscountPercent(0);
+        alert('Промокод не найден. Попробуйте промокод LAB11 для скидки 15%.');
+      }
+    };
+  
+    // Подсчет количества и итоговой стоимости
+    var totalCount = orderItems.reduce(function (sum, item) {
+      return sum + item.qty;
+    }, 0);
+    var subtotal = orderItems.reduce(function (sum, item) {
+      return sum + item.unitPrice * item.qty;
+    }, 0);
+    var discountAmount = Math.round(subtotal * (discountPercent / 100));
+    var finalTotal = subtotal - discountAmount;
+  
+    // Фильтрация и сортировка меню
+    var categories = ['Все'].concat(_toConsumableArray(new Set(menu.map(function (d) {
+      return d.category;
+    }))));
+    var filteredMenu = menu.filter(function (d) {
+      return activeCategory === 'Все' || d.category === activeCategory;
+    }).filter(function (d) {
+      return d.name.toLowerCase().includes(searchQuery.toLowerCase());
+    }).sort(function (a, b) {
+      if (sortBy === 'price-asc') return a.price - b.price;
+      if (sortBy === 'price-desc') return b.price - a.price;
+      return 0;
+    });
+    var handleCheckout = function handleCheckout() {
+      playTone(820);
+      setOrderSuccess("\u0417\u0430\u043A\u0430\u0437 \u043D\u0430 \u0441\u0443\u043C\u043C\u0443 ".concat(finalTotal.toLocaleString(), " \u20B8 (").concat(totalCount, " \u043F\u043E\u0437.) \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u043E\u0444\u043E\u0440\u043C\u043B\u0435\u043D!"));
+      setOrderItems([]);
+      setDiscountPercent(0);
+      setPromoCode('');
+    };
+    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("header", null, /*#__PURE__*/React.createElement("div", {
+      className: "logo"
+    }, /*#__PURE__*/React.createElement("span", null, "\uD83C\uDF7D GourmetCraft"), /*#__PURE__*/React.createElement("span", {
+      className: "logo-badge"
+    }, "\u041B\u0430\u0431. \u211611 \u2022 \u0412\u0430\u0440\u0438\u0430\u043D\u0442 20")), /*#__PURE__*/React.createElement("div", {
+      className: "header-controls"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "theme-group"
+    }, [{
+      id: 'dark',
+      label: '🌙 Темная'
+    }, {
+      id: 'light',
+      label: '☀️ Светлая'
+    }, {
+      id: 'emerald',
+      label: '🌿 Изумруд'
+    }].map(function (t) {
+      return /*#__PURE__*/React.createElement("button", {
+        key: t.id,
+        className: "theme-btn ".concat(theme === t.id ? 'active' : ''),
+        onClick: function onClick() {
+          return setTheme(t.id);
+        }
+      }, t.label);
+    })))), /*#__PURE__*/React.createElement("main", null, /*#__PURE__*/React.createElement("div", {
+      className: "workspace"
+    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      className: "toolbar"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "categories"
+    }, categories.map(function (cat) {
+      return /*#__PURE__*/React.createElement("button", {
+        key: cat,
+        className: "cat-btn ".concat(activeCategory === cat ? 'active' : ''),
+        onClick: function onClick() {
+          return setActiveCategory(cat);
+        }
+      }, cat);
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "search-box"
+    }, /*#__PURE__*/React.createElement("input", {
+      className: "search-input",
+      type: "text",
+      placeholder: "\u041F\u043E\u0438\u0441\u043A \u0431\u043B\u044E\u0434\u0430...",
+      value: searchQuery,
+      onChange: function onChange(e) {
+        return setSearchQuery(e.target.value);
+      }
+    }), /*#__PURE__*/React.createElement("select", {
+      className: "sort-select",
+      value: sortBy,
+      onChange: function onChange(e) {
+        return setSortBy(e.target.value);
+      }
+    }, /*#__PURE__*/React.createElement("option", {
+      value: "default"
+    }, "\u041F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E"), /*#__PURE__*/React.createElement("option", {
+      value: "price-asc"
+    }, "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0434\u0435\u0448\u0435\u0432\u043B\u0435"), /*#__PURE__*/React.createElement("option", {
+      value: "price-desc"
+    }, "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0434\u043E\u0440\u043E\u0436\u0435")))), /*#__PURE__*/React.createElement("div", {
+      className: "menu-grid"
+    }, filteredMenu.map(function (dish) {
+      return /*#__PURE__*/React.createElement(MenuItem, {
+        key: dish.id,
+        dish: dish,
+        onAddToOrder: handleAddToOrder
+      });
+    }))), /*#__PURE__*/React.createElement("aside", {
+      className: "order-panel"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "order-header"
+    }, /*#__PURE__*/React.createElement("h2", null, "\uD83E\uDDFE \u0412\u0430\u0448 \u0437\u0430\u043A\u0430\u0437 (", totalCount, ")"), orderItems.length > 0 && /*#__PURE__*/React.createElement("button", {
+      className: "btn-clear",
+      onClick: function onClick() {
+        setOrderItems([]);
+        setDiscountPercent(0);
+      }
+    }, "\u041E\u0447\u0438\u0441\u0442\u0438\u0442\u044C")), orderItems.length === 0 ? /*#__PURE__*/React.createElement("div", {
+      className: "empty-cart"
+    }, "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0431\u043B\u044E\u0434\u0430 \u0438\u0437 \u043C\u0435\u043D\u044E \u0441\u043B\u0435\u0432\u0430, \u043D\u0430\u0441\u0442\u0440\u043E\u0439\u0442\u0435 \u0440\u0430\u0437\u043C\u0435\u0440 \u043F\u043E\u0440\u0446\u0438\u0438 \u0438\u043B\u0438 \u0434\u043E\u0431\u0430\u0432\u043A\u0438 \u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 \xAB+ \u0412 \u0437\u0430\u043A\u0430\u0437\xBB.") : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      className: "order-list"
+    }, orderItems.map(function (item) {
+      return /*#__PURE__*/React.createElement(OrderRow, {
+        key: item.key,
+        item: item,
+        onUpdateQty: handleUpdateQty
+      });
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "promo-row"
+    }, /*#__PURE__*/React.createElement("input", {
+      className: "promo-input",
+      type: "text",
+      placeholder: "\u041F\u0440\u043E\u043C\u043E\u043A\u043E\u0434 (\u0432\u0432\u0435\u0434\u0438\u0442\u0435 LAB11)",
+      value: promoCode,
+      onChange: function onChange(e) {
+        return setPromoCode(e.target.value);
+      }
+    }), /*#__PURE__*/React.createElement("button", {
+      className: "btn-promo",
+      onClick: applyPromo
+    }, "OK")), /*#__PURE__*/React.createElement("div", {
+      className: "summary-box"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "summary-line"
+    }, /*#__PURE__*/React.createElement("span", null, "\u0412\u044B\u0431\u0440\u0430\u043D\u043E \u043F\u043E\u0437\u0438\u0446\u0438\u0439:"), /*#__PURE__*/React.createElement("strong", null, totalCount, " \u0448\u0442.")), /*#__PURE__*/React.createElement("div", {
+      className: "summary-line"
+    }, /*#__PURE__*/React.createElement("span", null, "\u0421\u0443\u043C\u043C\u0430 \u0431\u0435\u0437 \u0441\u043A\u0438\u0434\u043A\u0438:"), /*#__PURE__*/React.createElement("span", null, subtotal.toLocaleString(), " \u20B8")), discountPercent > 0 && /*#__PURE__*/React.createElement("div", {
+      className: "summary-line",
+      style: {
+        color: 'var(--success)'
+      }
+    }, /*#__PURE__*/React.createElement("span", null, "\u0421\u043A\u0438\u0434\u043A\u0430 \u043F\u043E \u043F\u0440\u043E\u043C\u043E\u043A\u043E\u0434\u0443 (", discountPercent, "%):"), /*#__PURE__*/React.createElement("span", null, "\u2212", discountAmount.toLocaleString(), " \u20B8")), /*#__PURE__*/React.createElement("div", {
+      className: "summary-total"
+    }, /*#__PURE__*/React.createElement("span", null, "\u0418\u0442\u043E\u0433\u043E:"), /*#__PURE__*/React.createElement("span", null, finalTotal.toLocaleString(), " \u20B8"))), /*#__PURE__*/React.createElement("button", {
+      className: "btn-checkout",
+      onClick: handleCheckout
+    }, "\u041E\u0444\u043E\u0440\u043C\u0438\u0442\u044C \u0437\u0430\u043A\u0430\u0437")), orderSuccess && /*#__PURE__*/React.createElement("div", {
+      className: "toast-msg"
+    }, orderSuccess))), /*#__PURE__*/React.createElement(AddDishForm, {
+      onCreateDish: function onCreateDish(newDish) {
+        return setMenu(function (prev) {
+          return [newDish].concat(_toConsumableArray(prev));
+        });
+      }
+    }), /*#__PURE__*/React.createElement(DefenseReport, null)), /*#__PURE__*/React.createElement("footer", null, "\u0414\u0438\u0441\u0446\u0438\u043F\u043B\u0438\u043D\u0430 \xAB\u042F\u0437\u044B\u043A\u0438 \u0438 \u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0438\u044F \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F\xBB \u2022 \u041B\u0430\u0431\u043E\u0440\u0430\u0442\u043E\u0440\u043D\u0430\u044F \u0440\u0430\u0431\u043E\u0442\u0430 \u2116 11 \u2022 \u0412\u0430\u0440\u0438\u0430\u043D\u0442 \u2116 20 (2026)"));
+  }
+  var root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(/*#__PURE__*/React.createElement(App, null));
+  //# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiSW5saW5lIEJhYmVsIHNjcmlwdCJdLCJzb3VyY2VzQ29udGVudCI6WyJcbiAgICBjb25zdCB7IHVzZVN0YXRlLCB1c2VFZmZlY3QgfSA9IFJlYWN0O1xuXG4gICAgLy8g0JjRgdGF0L7QtNC90YvQuSDQutCw0YLQsNC70L7QsyDQsdC70Y7QtCDRgSDRhNC+0YLQvtCz0YDQsNGE0LjRj9C80Lgg0LjQtyDQuNC90YLQtdGA0L3QtdGC0LAgKFVuc3BsYXNoKVxuICAgIGNvbnN0IElOSVRJQUxfTUVOVSA9IFtcbiAgICAgIHtcbiAgICAgICAgaWQ6IDEsXG4gICAgICAgIG5hbWU6ICfQkdGD0YDQs9C10YAgwqvQp9C10YDQvdGL0Lkg0JDQvdCz0YPRgcK7JyxcbiAgICAgICAgY2F0ZWdvcnk6ICfQkdGD0YDQs9C10YDRiycsXG4gICAgICAgIHByaWNlOiAyODkwLFxuICAgICAgICBrY2FsOiA2ODAsXG4gICAgICAgIGRlc2M6ICfQnNGA0LDQvNC+0YDQvdCw0Y8g0LPQvtCy0Y/QtNC40L3QsCDQvdCwINCz0YDQuNC70LUsINCy0YvQtNC10YDQttCw0L3QvdGL0Lkg0YfQtdC00LTQtdGALCDQutCw0YDQsNC80LXQu9C40LfQuNGA0L7QstCw0L3QvdGL0Lkg0LvRg9C6INC4INGE0LjRgNC80LXQvdC90YvQuSDRgdC+0YPRgS4nLFxuICAgICAgICBpbWFnZTogJ2h0dHBzOi8vaW1hZ2VzLnVuc3BsYXNoLmNvbS9waG90by0xNTY4OTAxMzQ2Mzc1LTIzYzk0NTBjNThjZD9hdXRvPWZvcm1hdCZmaXQ9Y3JvcCZ3PTcwMCZxPTgwJyxcbiAgICAgICAgYWRkb25OYW1lOiAn0JTQstC+0LnQvdC+0Lkg0LHQtdC60L7QvSDQuCDRgdGL0YAnLFxuICAgICAgICBhZGRvblByaWNlOiA1NTBcbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIGlkOiAyLFxuICAgICAgICBuYW1lOiAn0J/QuNGG0YbQsCDCq9Cc0LDRgNCz0LDRgNC40YLQsCDQndC10LDQv9C+0LvQuNGC0LDQvdCwwrsnLFxuICAgICAgICBjYXRlZ29yeTogJ9Cf0LjRhtGG0LAnLFxuICAgICAgICBwcmljZTogMzIwMCxcbiAgICAgICAga2NhbDogODIwLFxuICAgICAgICBkZXNjOiAn0KLQvtC90LrQvtC1INGC0LXRgdGC0L4g0L3QsCDQt9Cw0LrQstCw0YHQutC1LCDRgtC+0LzQsNGC0Ysg0KHQsNC9LdCc0LDRgNGG0LDQvdC+LCDRgdCy0LXQttCw0Y8g0LzQvtGG0LDRgNC10LvQu9CwINC4INC70LjRgdGC0YzRjyDQsdCw0LfQuNC70LjQutCwLicsXG4gICAgICAgIGltYWdlOiAnaHR0cHM6Ly9pbWFnZXMudW5zcGxhc2guY29tL3Bob3RvLTE1NzQwNzEzMTg1MDgtMWNkYmFiODBkMDAyP2F1dG89Zm9ybWF0JmZpdD1jcm9wJnc9NzAwJnE9ODAnLFxuICAgICAgICBhZGRvbk5hbWU6ICfQodGL0YDQvdGL0Lkg0LHQvtGA0YLQuNC6JyxcbiAgICAgICAgYWRkb25QcmljZTogNjUwXG4gICAgICB9LFxuICAgICAge1xuICAgICAgICBpZDogMyxcbiAgICAgICAgbmFtZTogJ9Cg0L7Qu9C7IMKr0KTQuNC70LDQtNC10LvRjNGE0LjRjyDQn9GA0LXQvNC40YPQvMK7JyxcbiAgICAgICAgY2F0ZWdvcnk6ICfQoNC+0LvQu9GLJyxcbiAgICAgICAgcHJpY2U6IDM0NTAsXG4gICAgICAgIGtjYWw6IDQ5MCxcbiAgICAgICAgZGVzYzogJ9Ce0YXQu9Cw0LbQtNC10L3QvdGL0Lkg0L3QvtGA0LLQtdC20YHQutC40Lkg0LvQvtGB0L7RgdGMLCDRgdC70LjQstC+0YfQvdGL0Lkg0YHRi9GALCDRgdC/0LXQu9GL0Lkg0LDQstC+0LrQsNC00L4g0Lgg0YXRgNGD0YHRgtGP0YnQuNC5INC+0LPRg9GA0LXRhi4nLFxuICAgICAgICBpbWFnZTogJ2h0dHBzOi8vaW1hZ2VzLnVuc3BsYXNoLmNvbS9waG90by0xNTc5ODcxNDk0NDQ3LTk4MTFjZjgwZDY2Yz9hdXRvPWZvcm1hdCZmaXQ9Y3JvcCZ3PTcwMCZxPTgwJyxcbiAgICAgICAgYWRkb25OYW1lOiAn0JjQutGA0LAg0YLQvtCx0LjQutC+INC4INGD0L3QsNCz0LgnLFxuICAgICAgICBhZGRvblByaWNlOiA0OTBcbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIGlkOiA0LFxuICAgICAgICBuYW1lOiAn0J/QsNGB0YLQsCDCq9Ca0LDRgNCx0L7QvdCw0YDQsMK7JyxcbiAgICAgICAgY2F0ZWdvcnk6ICfQk9C+0YDRj9GH0LXQtScsXG4gICAgICAgIHByaWNlOiAyNjUwLFxuICAgICAgICBrY2FsOiA2MTAsXG4gICAgICAgIGRlc2M6ICfQodC/0LDQs9C10YLRgtC4INCw0LvRjCDQtNC10L3RgtC1LCDRhdGA0YPRgdGC0Y/RidCw0Y8g0L/QsNC90YfQtdGC0YLQsCwg0YHQvtGD0YEg0LjQtyDQttC10LvRgtC60L7QsiDQuCDRgtC10YDRgtGL0Lkg0L/QsNGA0LzQtdC30LDQvSAyNCDQvNC10YEuJyxcbiAgICAgICAgaW1hZ2U6ICdodHRwczovL2ltYWdlcy51bnNwbGFzaC5jb20vcGhvdG8tMTYxMjg3NDc0MjIzNy02NTI2MjIxNTg4ZTM/YXV0bz1mb3JtYXQmZml0PWNyb3Amdz03MDAmcT04MCcsXG4gICAgICAgIGFkZG9uTmFtZTogJ9Ci0YDRjtGE0LXQu9GM0L3QvtC1INC80LDRgdC70L4nLFxuICAgICAgICBhZGRvblByaWNlOiA0NTBcbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIGlkOiA1LFxuICAgICAgICBuYW1lOiAn0KHQsNC70LDRgiDCq9Cm0LXQt9Cw0YDRjCDRgSDRhtGL0L/Qu9C10L3QutC+0LzCuycsXG4gICAgICAgIGNhdGVnb3J5OiAn0KHQsNC70LDRgtGLJyxcbiAgICAgICAgcHJpY2U6IDIxOTAsXG4gICAgICAgIGtjYWw6IDM4MCxcbiAgICAgICAgZGVzYzogJ9Cb0LjRgdGC0YzRjyDRgNC+0LzQsNC90L4sINC60YPRgNC40L3QvtC1INGE0LjQu9C1INGB0YMt0LLQuNC0LCDRh9C10YHQvdC+0YfQvdGL0LUg0LrRgNGD0YLQvtC90YssINC/0LDRgNC80LXQt9Cw0L0g0Lgg0LrQu9Cw0YHRgdC40YfQtdGB0LrQuNC5INGB0L7Rg9GBLicsXG4gICAgICAgIGltYWdlOiAnaHR0cHM6Ly9pbWFnZXMudW5zcGxhc2guY29tL3Bob3RvLTE1NTAzMDQ5NDMtNGYyNGY1NGRkZGU5P2F1dG89Zm9ybWF0JmZpdD1jcm9wJnc9NzAwJnE9ODAnLFxuICAgICAgICBhZGRvbk5hbWU6ICfQotC40LPRgNC+0LLRi9C1INC60YDQtdCy0LXRgtC60LgnLFxuICAgICAgICBhZGRvblByaWNlOiA3OTBcbiAgICAgIH0sXG4gICAgICB7XG4gICAgICAgIGlkOiA2LFxuICAgICAgICBuYW1lOiAn0JTQtdGB0LXRgNGCIMKr0KLQuNGA0LDQvNC40YHRgyDQmtC70LDRgdGB0LjQusK7JyxcbiAgICAgICAgY2F0ZWdvcnk6ICfQlNC10YHQtdGA0YLRiycsXG4gICAgICAgIHByaWNlOiAxNzUwLFxuICAgICAgICBrY2FsOiA0MTAsXG4gICAgICAgIGRlc2M6ICfQktC+0LfQtNGD0YjQvdGL0Lkg0LrRgNC10Lwg0L3QsCDQvtGB0L3QvtCy0LUg0LzQsNGB0LrQsNGA0L/QvtC90LUsINC/0LXRh9C10L3RjNC1INGB0LDQstC+0Y/RgNC00LgsINC/0YDQvtC/0LjRgtCw0L3QvdC+0LUg0Y3RgdC/0YDQtdGB0YHQviwg0Lgg0LrQsNC60LDQvi4nLFxuICAgICAgICBpbWFnZTogJ2h0dHBzOi8vaW1hZ2VzLnVuc3BsYXNoLmNvbS9waG90by0xNTcxODc3MjI3MjAwLWEwZDk4ZWE2MDdlOT9hdXRvPWZvcm1hdCZmaXQ9Y3JvcCZ3PTcwMCZxPTgwJyxcbiAgICAgICAgYWRkb25OYW1lOiAn0KjQsNGA0LjQuiDQv9C70L7QvNCx0LjRgNCwJyxcbiAgICAgICAgYWRkb25QcmljZTogMzUwXG4gICAgICB9XG4gICAgXTtcblxuICAgIC8vINCX0LLRg9C60L7QstC+0Lkg0L7RgtC60LvQuNC6XG4gICAgZnVuY3Rpb24gcGxheVRvbmUoZnJlcSA9IDU0MCkge1xuICAgICAgdHJ5IHtcbiAgICAgICAgY29uc3QgY3R4ID0gbmV3ICh3aW5kb3cuQXVkaW9Db250ZXh0IHx8IHdpbmRvdy53ZWJraXRBdWRpb0NvbnRleHQpKCk7XG4gICAgICAgIGNvbnN0IG9zYyA9IGN0eC5jcmVhdGVPc2NpbGxhdG9yKCk7XG4gICAgICAgIGNvbnN0IGdhaW4gPSBjdHguY3JlYXRlR2FpbigpO1xuICAgICAgICBvc2MudHlwZSA9ICdzaW5lJztcbiAgICAgICAgb3NjLmZyZXF1ZW5jeS5zZXRWYWx1ZUF0VGltZShmcmVxLCBjdHguY3VycmVudFRpbWUpO1xuICAgICAgICBnYWluLmdhaW4uc2V0VmFsdWVBdFRpbWUoMC4wNiwgY3R4LmN1cnJlbnRUaW1lKTtcbiAgICAgICAgZ2Fpbi5nYWluLmV4cG9uZW50aWFsUmFtcFRvVmFsdWVBdFRpbWUoMC4wMDEsIGN0eC5jdXJyZW50VGltZSArIDAuMDgpO1xuICAgICAgICBvc2MuY29ubmVjdChnYWluKTtcbiAgICAgICAgZ2Fpbi5jb25uZWN0KGN0eC5kZXN0aW5hdGlvbik7XG4gICAgICAgIG9zYy5zdGFydCgpO1xuICAgICAgICBvc2Muc3RvcChjdHguY3VycmVudFRpbWUgKyAwLjA4KTtcbiAgICAgIH0gY2F0Y2ggKGUpIHt9XG4gICAgfVxuXG4gICAgLy8g0JTQvtGH0LXRgNC90LjQuSDQutC+0LzQv9C+0L3QtdC90YIgMTog0JrQsNGA0YLQvtGH0LrQsCDQsdC70Y7QtNCwIChNZW51SXRlbSlcbiAgICAvLyDQn9C+0LvRg9GH0LDQtdGCINC+0LHRitC10LrRgiDQsdC70Y7QtNCwINGH0LXRgNC10LcgcHJvcHMg0Lgg0L/QtdGA0LXQtNCw0LXRgiDRgdC+0LHRi9GC0LjQtSDQstGL0LHQvtGA0LAg0YDQvtC00LjRgtC10LvRjlxuICAgIGZ1bmN0aW9uIE1lbnVJdGVtKHsgZGlzaCwgb25BZGRUb09yZGVyIH0pIHtcbiAgICAgIGNvbnN0IFtzaXplLCBzZXRTaXplXSA9IHVzZVN0YXRlKCfQodGC0LDQvdC00LDRgNGCJyk7XG4gICAgICBjb25zdCBbd2l0aEFkZG9uLCBzZXRXaXRoQWRkb25dID0gdXNlU3RhdGUoZmFsc2UpO1xuXG4gICAgICAvLyDQoNCw0YHRh9C10YIg0LjRgtC+0LPQvtCy0L7QuSDRhtC10L3RiyDQutC+0L3QutGA0LXRgtC90L7QuSDQutC+0L3RhNC40LPRg9GA0LDRhtC40LhcbiAgICAgIGNvbnN0IHNpemVNdWx0aXBsaWVyID0gc2l6ZSA9PT0gJ9CR0L7Qu9GM0YjQsNGPIChYTCknID8gMS4yNSA6IDE7XG4gICAgICBjb25zdCBmaW5hbFByaWNlID0gTWF0aC5yb3VuZChkaXNoLnByaWNlICogc2l6ZU11bHRpcGxpZXIpICsgKHdpdGhBZGRvbiA/IGRpc2guYWRkb25QcmljZSA6IDApO1xuXG4gICAgICBjb25zdCBoYW5kbGVBZGQgPSAoKSA9PiB7XG4gICAgICAgIHBsYXlUb25lKDY0MCk7XG4gICAgICAgIG9uQWRkVG9PcmRlcih7XG4gICAgICAgICAga2V5OiBgJHtkaXNoLmlkfS0ke3NpemV9LSR7d2l0aEFkZG9ufWAsXG4gICAgICAgICAgaWQ6IGRpc2guaWQsXG4gICAgICAgICAgbmFtZTogZGlzaC5uYW1lLFxuICAgICAgICAgIGltYWdlOiBkaXNoLmltYWdlLFxuICAgICAgICAgIHNpemUsXG4gICAgICAgICAgYWRkb246IHdpdGhBZGRvbiA/IGRpc2guYWRkb25OYW1lIDogbnVsbCxcbiAgICAgICAgICB1bml0UHJpY2U6IGZpbmFsUHJpY2VcbiAgICAgICAgfSk7XG4gICAgICB9O1xuXG4gICAgICByZXR1cm4gKFxuICAgICAgICA8YXJ0aWNsZSBjbGFzc05hbWU9XCJkaXNoLWNhcmRcIj5cbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImRpc2gtaW1nLXdyYXBcIj5cbiAgICAgICAgICAgIDxpbWdcbiAgICAgICAgICAgICAgY2xhc3NOYW1lPVwiZGlzaC1pbWdcIlxuICAgICAgICAgICAgICBzcmM9e2Rpc2guaW1hZ2V9XG4gICAgICAgICAgICAgIGFsdD17ZGlzaC5uYW1lfVxuICAgICAgICAgICAgICBvbkVycm9yPXsoZSkgPT4ge1xuICAgICAgICAgICAgICAgIGUudGFyZ2V0LnNyYyA9ICdodHRwczovL2ltYWdlcy51bnNwbGFzaC5jb20vcGhvdG8tMTUwNDY3NDkwMDI0Ny0wODc3ZGY5Y2M4MzY/YXV0bz1mb3JtYXQmZml0PWNyb3Amdz03MDAmcT04MCc7XG4gICAgICAgICAgICAgIH19XG4gICAgICAgICAgICAvPlxuICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwiZGlzaC1iYWRnZVwiPntkaXNoLmNhdGVnb3J5fTwvc3Bhbj5cbiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cImRpc2gta2NhbFwiPntkaXNoLmtjYWx9INC60LrQsNC7PC9zcGFuPlxuICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJkaXNoLWJvZHlcIj5cbiAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9XCJkaXNoLXRpdGxlXCI+e2Rpc2gubmFtZX08L2gzPlxuICAgICAgICAgICAgPHAgY2xhc3NOYW1lPVwiZGlzaC1kZXNjXCI+e2Rpc2guZGVzY308L3A+XG5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwib3B0aW9ucy1ib3hcIj5cbiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJzaXplLXJvd1wiPlxuICAgICAgICAgICAgICAgIHtbJ9Ch0YLQsNC90LTQsNGA0YInLCAn0JHQvtC70YzRiNCw0Y8gKFhMKSddLm1hcChzID0+IChcbiAgICAgICAgICAgICAgICAgIDxidXR0b25cbiAgICAgICAgICAgICAgICAgICAga2V5PXtzfVxuICAgICAgICAgICAgICAgICAgICB0eXBlPVwiYnV0dG9uXCJcbiAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPXtgc2l6ZS1idG4gJHtzaXplID09PSBzID8gJ2FjdGl2ZScgOiAnJ31gfVxuICAgICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRTaXplKHMpfVxuICAgICAgICAgICAgICAgICAgPlxuICAgICAgICAgICAgICAgICAgICB7c31cbiAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPlxuICAgICAgICAgICAgICAgICkpfVxuICAgICAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgICAgICB7ZGlzaC5hZGRvbk5hbWUgJiYgKFxuICAgICAgICAgICAgICAgIDxsYWJlbCBjbGFzc05hbWU9XCJhZGRvbi1sYWJlbFwiPlxuICAgICAgICAgICAgICAgICAgPHNwYW4+XG4gICAgICAgICAgICAgICAgICAgIDxpbnB1dFxuICAgICAgICAgICAgICAgICAgICAgIHR5cGU9XCJjaGVja2JveFwiXG4gICAgICAgICAgICAgICAgICAgICAgY2hlY2tlZD17d2l0aEFkZG9ufVxuICAgICAgICAgICAgICAgICAgICAgIG9uQ2hhbmdlPXsoZSkgPT4gc2V0V2l0aEFkZG9uKGUudGFyZ2V0LmNoZWNrZWQpfVxuICAgICAgICAgICAgICAgICAgICAvPlxuICAgICAgICAgICAgICAgICAgICB7ZGlzaC5hZGRvbk5hbWV9XG4gICAgICAgICAgICAgICAgICA8L3NwYW4+XG4gICAgICAgICAgICAgICAgICA8c3Ryb25nPit7ZGlzaC5hZGRvblByaWNlfSDigrg8L3N0cm9uZz5cbiAgICAgICAgICAgICAgICA8L2xhYmVsPlxuICAgICAgICAgICAgICApfVxuICAgICAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZGlzaC1mb290ZXJcIj5cbiAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwiZGlzaC1wcmljZVwiPntmaW5hbFByaWNlLnRvTG9jYWxlU3RyaW5nKCl9IOKCuDwvc3Bhbj5cbiAgICAgICAgICAgICAgPGJ1dHRvbiB0eXBlPVwiYnV0dG9uXCIgY2xhc3NOYW1lPVwiYnRuLWFkZFwiIG9uQ2xpY2s9e2hhbmRsZUFkZH0+XG4gICAgICAgICAgICAgICAgKyDQkiDQt9Cw0LrQsNC3XG4gICAgICAgICAgICAgIDwvYnV0dG9uPlxuICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgPC9kaXY+XG4gICAgICAgIDwvYXJ0aWNsZT5cbiAgICAgICk7XG4gICAgfVxuXG4gICAgLy8g0JTQvtGH0LXRgNC90LjQuSDQutC+0LzQv9C+0L3QtdC90YIgMjog0J/QvtC30LjRhtC40Y8g0LIg0LrQvtGA0LfQuNC90LUg0LfQsNC60LDQt9CwIChPcmRlclJvdylcbiAgICBmdW5jdGlvbiBPcmRlclJvdyh7IGl0ZW0sIG9uVXBkYXRlUXR5IH0pIHtcbiAgICAgIHJldHVybiAoXG4gICAgICAgIDxkaXYgY2xhc3NOYW1lPVwib3JkZXItaXRlbVwiPlxuICAgICAgICAgIDxpbWcgY2xhc3NOYW1lPVwib3JkZXItaXRlbS1pbWdcIiBzcmM9e2l0ZW0uaW1hZ2V9IGFsdD17aXRlbS5uYW1lfSAvPlxuICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwib3JkZXItaXRlbS1pbmZvXCI+XG4gICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm9yZGVyLWl0ZW0tdGl0bGVcIj57aXRlbS5uYW1lfTwvZGl2PlxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJvcmRlci1pdGVtLW1ldGFcIj5cbiAgICAgICAgICAgICAge2l0ZW0uc2l6ZX17aXRlbS5hZGRvbiA/IGAg4oCiICsgJHtpdGVtLmFkZG9ufWAgOiAnJ31cbiAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJvcmRlci1pdGVtLXByaWNlXCI+XG4gICAgICAgICAgICAgIHsoaXRlbS51bml0UHJpY2UgKiBpdGVtLnF0eSkudG9Mb2NhbGVTdHJpbmcoKX0g4oK4XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwicXR5LWNvbnRyb2xzXCI+XG4gICAgICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT1cInF0eS1idG5cIiBvbkNsaWNrPXsoKSA9PiBvblVwZGF0ZVF0eShpdGVtLmtleSwgLTEpfT7iiJI8L2J1dHRvbj5cbiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT1cInF0eS12YWxcIj57aXRlbS5xdHl9PC9zcGFuPlxuICAgICAgICAgICAgPGJ1dHRvbiBjbGFzc05hbWU9XCJxdHktYnRuXCIgb25DbGljaz17KCkgPT4gb25VcGRhdGVRdHkoaXRlbS5rZXksIDEpfT4rPC9idXR0b24+XG4gICAgICAgICAgPC9kaXY+XG4gICAgICAgIDwvZGl2PlxuICAgICAgKTtcbiAgICB9XG5cbiAgICAvLyDQlNC+0YfQtdGA0L3QuNC5INC60L7QvNC/0L7QvdC10L3RgiAzOiDQpNC+0YDQvNCwINC00L7QsdCw0LLQu9C10L3QuNGPINC90L7QstC+0LPQviDQsdC70Y7QtNCwINCyINC80LXQvdGOINGBINGE0L7RgtC+INC/0L4gVVJMXG4gICAgZnVuY3Rpb24gQWRkRGlzaEZvcm0oeyBvbkNyZWF0ZURpc2ggfSkge1xuICAgICAgY29uc3QgW25hbWUsIHNldE5hbWVdID0gdXNlU3RhdGUoJycpO1xuICAgICAgY29uc3QgW2NhdGVnb3J5LCBzZXRDYXRlZ29yeV0gPSB1c2VTdGF0ZSgn0JHRg9GA0LPQtdGA0YsnKTtcbiAgICAgIGNvbnN0IFtwcmljZSwgc2V0UHJpY2VdID0gdXNlU3RhdGUoMjUwMCk7XG4gICAgICBjb25zdCBbaW1hZ2UsIHNldEltYWdlXSA9IHVzZVN0YXRlKCcnKTtcbiAgICAgIGNvbnN0IFtlcnJvciwgc2V0RXJyb3JdID0gdXNlU3RhdGUoJycpO1xuXG4gICAgICBjb25zdCBoYW5kbGVTdWJtaXQgPSAoZSkgPT4ge1xuICAgICAgICBlLnByZXZlbnREZWZhdWx0KCk7XG4gICAgICAgIGlmICghbmFtZS50cmltKCkpIHtcbiAgICAgICAgICBzZXRFcnJvcign0JLQstC10LTQuNGC0LUg0L3QsNC30LLQsNC90LjQtSDQsdC70Y7QtNCwLicpO1xuICAgICAgICAgIHJldHVybjtcbiAgICAgICAgfVxuICAgICAgICBjb25zdCBudW1QcmljZSA9IE51bWJlcihwcmljZSk7XG4gICAgICAgIGlmIChpc05hTihudW1QcmljZSkgfHwgbnVtUHJpY2UgPD0gMCkge1xuICAgICAgICAgIHNldEVycm9yKCfQo9C60LDQttC40YLQtSDQutC+0YDRgNC10LrRgtC90YPRjiDRhtC10L3RgyDQsdC+0LvRjNGI0LUgMC4nKTtcbiAgICAgICAgICByZXR1cm47XG4gICAgICAgIH1cblxuICAgICAgICBzZXRFcnJvcignJyk7XG4gICAgICAgIHBsYXlUb25lKDcyMCk7XG4gICAgICAgIG9uQ3JlYXRlRGlzaCh7XG4gICAgICAgICAgaWQ6IERhdGUubm93KCksXG4gICAgICAgICAgbmFtZTogbmFtZS50cmltKCksXG4gICAgICAgICAgY2F0ZWdvcnksXG4gICAgICAgICAgcHJpY2U6IG51bVByaWNlLFxuICAgICAgICAgIGtjYWw6IDUyMCxcbiAgICAgICAgICBkZXNjOiAn0JDQstGC0L7RgNGB0LrQvtC1INCx0LvRjtC00L4sINC00L7QsdCw0LLQu9C10L3QvdC+0LUg0L/QvtC70YzQt9C+0LLQsNGC0LXQu9C10Lwg0LIg0LjQvdGC0LXRgNCw0LrRgtC40LLQvdC+0LUg0LzQtdC90Y4uJyxcbiAgICAgICAgICBpbWFnZTogaW1hZ2UudHJpbSgpIHx8ICdodHRwczovL2ltYWdlcy51bnNwbGFzaC5jb20vcGhvdG8tMTU0NjA2OTkwMS1iYTk1OTlhN2U2M2M/YXV0bz1mb3JtYXQmZml0PWNyb3Amdz03MDAmcT04MCcsXG4gICAgICAgICAgYWRkb25OYW1lOiAn0KTQuNGA0LzQtdC90L3Ri9C5INGB0L7Rg9GBJyxcbiAgICAgICAgICBhZGRvblByaWNlOiAzNTBcbiAgICAgICAgfSk7XG4gICAgICAgIHNldE5hbWUoJycpO1xuICAgICAgICBzZXRJbWFnZSgnJyk7XG4gICAgICB9O1xuXG4gICAgICByZXR1cm4gKFxuICAgICAgICA8c2VjdGlvbiBjbGFzc05hbWU9XCJjdXN0b20tZGlzaC1iYXJcIj5cbiAgICAgICAgICA8aDM+8J+NsyDQlNC+0LHQsNCy0LjRgtGMINGB0LLQvtC1INCx0LvRjtC00L4g0LIg0LrQsNGC0LDQu9C+0LMgKNGBINGE0L7RgtC+INC40Lcg0LjQvdGC0LXRgNC90LXRgtCwKTwvaDM+XG4gICAgICAgICAgPGZvcm0gY2xhc3NOYW1lPVwiY3VzdG9tLWZvcm1cIiBvblN1Ym1pdD17aGFuZGxlU3VibWl0fT5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmllbGRcIj5cbiAgICAgICAgICAgICAgPGxhYmVsPtCd0LDQt9Cy0LDQvdC40LUg0LHQu9GO0LTQsDwvbGFiZWw+XG4gICAgICAgICAgICAgIDxpbnB1dFxuICAgICAgICAgICAgICAgIHR5cGU9XCJ0ZXh0XCJcbiAgICAgICAgICAgICAgICBwbGFjZWhvbGRlcj1cItCd0LDQv9GA0LjQvNC10YA6INCh0YLQtdC50Log0KDQuNCx0LDQuVwiXG4gICAgICAgICAgICAgICAgdmFsdWU9e25hbWV9XG4gICAgICAgICAgICAgICAgb25DaGFuZ2U9eyhlKSA9PiBzZXROYW1lKGUudGFyZ2V0LnZhbHVlKX1cbiAgICAgICAgICAgICAgLz5cbiAgICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImZpZWxkXCI+XG4gICAgICAgICAgICAgIDxsYWJlbD7QmtCw0YLQtdCz0L7RgNC40Y88L2xhYmVsPlxuICAgICAgICAgICAgICA8c2VsZWN0IHZhbHVlPXtjYXRlZ29yeX0gb25DaGFuZ2U9eyhlKSA9PiBzZXRDYXRlZ29yeShlLnRhcmdldC52YWx1ZSl9PlxuICAgICAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9XCLQkdGD0YDQs9C10YDRi1wiPtCR0YPRgNCz0LXRgNGLPC9vcHRpb24+XG4gICAgICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT1cItCf0LjRhtGG0LBcIj7Qn9C40YbRhtCwPC9vcHRpb24+XG4gICAgICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT1cItCg0L7Qu9C70YtcIj7QoNC+0LvQu9GLPC9vcHRpb24+XG4gICAgICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT1cItCT0L7RgNGP0YfQtdC1XCI+0JPQvtGA0Y/Rh9C10LU8L29wdGlvbj5cbiAgICAgICAgICAgICAgICA8b3B0aW9uIHZhbHVlPVwi0KHQsNC70LDRgtGLXCI+0KHQsNC70LDRgtGLPC9vcHRpb24+XG4gICAgICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT1cItCU0LXRgdC10YDRgtGLXCI+0JTQtdGB0LXRgNGC0Ys8L29wdGlvbj5cbiAgICAgICAgICAgICAgPC9zZWxlY3Q+XG4gICAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmaWVsZFwiPlxuICAgICAgICAgICAgICA8bGFiZWw+0KbQtdC90LAgKOKCuCk8L2xhYmVsPlxuICAgICAgICAgICAgICA8aW5wdXRcbiAgICAgICAgICAgICAgICB0eXBlPVwibnVtYmVyXCJcbiAgICAgICAgICAgICAgICB2YWx1ZT17cHJpY2V9XG4gICAgICAgICAgICAgICAgb25DaGFuZ2U9eyhlKSA9PiBzZXRQcmljZShlLnRhcmdldC52YWx1ZSl9XG4gICAgICAgICAgICAgIC8+XG4gICAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJmaWVsZFwiPlxuICAgICAgICAgICAgICA8bGFiZWw+0KHRgdGL0LvQutCwINC90LAg0YTQvtGC0L4gKFVSTCk8L2xhYmVsPlxuICAgICAgICAgICAgICA8aW5wdXRcbiAgICAgICAgICAgICAgICB0eXBlPVwidXJsXCJcbiAgICAgICAgICAgICAgICBwbGFjZWhvbGRlcj1cImh0dHBzOi8vaW1hZ2VzLnVuc3BsYXNoLmNvbS8uLi5cIlxuICAgICAgICAgICAgICAgIHZhbHVlPXtpbWFnZX1cbiAgICAgICAgICAgICAgICBvbkNoYW5nZT17KGUpID0+IHNldEltYWdlKGUudGFyZ2V0LnZhbHVlKX1cbiAgICAgICAgICAgICAgLz5cbiAgICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgICA8YnV0dG9uIHR5cGU9XCJzdWJtaXRcIiBjbGFzc05hbWU9XCJidG4tYWRkXCIgc3R5bGU9e3sgaGVpZ2h0OiAnMzhweCcgfX0+XG4gICAgICAgICAgICAgICsg0JTQvtCx0LDQstC40YLRjCDQsiDQvNC10L3RjlxuICAgICAgICAgICAgPC9idXR0b24+XG4gICAgICAgICAgPC9mb3JtPlxuICAgICAgICAgIHtlcnJvciAmJiA8ZGl2IHN0eWxlPXt7IGNvbG9yOiAndmFyKC0tZGFuZ2VyKScsIGZvbnRTaXplOiAnMTNweCcsIG1hcmdpblRvcDogJzhweCcgfX0+e2Vycm9yfTwvZGl2Pn1cbiAgICAgICAgPC9zZWN0aW9uPlxuICAgICAgKTtcbiAgICB9XG5cbiAgICAvLyDQlNC+0YfQtdGA0L3QuNC5INC60L7QvNC/0L7QvdC10L3RgiA0OiDQktGB0YLRgNC+0LXQvdC90YvQuSDQvtGC0YfQtdGCINC00LvRjyDQt9Cw0YnQuNGC0Ysg0LLQsNGA0LjQsNC90YLQsCDihJYgMjBcbiAgICBmdW5jdGlvbiBEZWZlbnNlUmVwb3J0KCkge1xuICAgICAgY29uc3QgW29wZW4sIHNldE9wZW5dID0gdXNlU3RhdGUoZmFsc2UpO1xuXG4gICAgICBjb25zdCB0ZXN0cyA9IFtcbiAgICAgICAgeyBpZDogMSwgdHlwZTogJ9Cd0LDRh9Cw0LvRjNC90L7QtSDRgdC+0YHRgtC+0Y/QvdC40LUnLCBhY3Rpb246ICfQntGC0LrRgNGL0YLQuNC1INGB0YLRgNCw0L3QuNGG0YsnLCBleHBlY3RlZDogJ9Ce0YLQvtCx0YDQsNC20LDRjtGC0YHRjyA2INCx0LvRjtC0INGBINGE0L7RgtC+LCDQutC+0YDQt9C40L3QsCDQv9GD0YHRgtCwICgwIOKCuCknLCBhY3R1YWw6ICfQnNC10L3RjiDQt9Cw0LPRgNGD0LbQtdC90L4sINGB0YfQtdGC0YfQuNC6IDAg0YjRgi4sINC40YLQvtCzIDAg4oK4Jywgc3RhdHVzOiAn0J/RgNC+0LnQtNC10L0nIH0sXG4gICAgICAgIHsgaWQ6IDIsIHR5cGU6ICfQntGB0L3QvtCy0L3QvtC1INC00LXQudGB0YLQstC40LUnLCBhY3Rpb246ICfQktGL0LHQvtGAINGA0LDQt9C80LXRgNCwIFhMINC4INC60LvQuNC6IMKrKyDQkiDQt9Cw0LrQsNC3wrsnLCBleHBlY3RlZDogJ9CR0LvRjtC00L4g0LTQvtCx0LDQstC70LXQvdC+INCyINC/0YDQsNCy0YPRjiDQv9Cw0L3QtdC70YwsINGB0YPQvNC80LAg0L/QtdGA0LXRgdGH0LjRgtCw0L3QsCcsIGFjdHVhbDogJ9Cf0L7Qt9C40YbQuNGPINC/0L7Rj9Cy0LjQu9Cw0YHRjCDQsiDQt9Cw0LrQsNC30LUsINGG0LXQvdCwIMOXMS4yNSDRg9GH0YLQtdC90LAnLCBzdGF0dXM6ICfQn9GA0L7QudC00LXQvScgfSxcbiAgICAgICAgeyBpZDogMywgdHlwZTogJ9Cf0L7QstGC0L7RgNC90L7QtSDQtNC10LnRgdGC0LLQuNC1JywgYWN0aW9uOiAn0KPQstC10LvQuNGH0LXQvdC40LUg0LrQvtC70LjRh9C10YHRgtCy0LAgKCspINC4INCy0LLQvtC0INC/0YDQvtC80L7QutC+0LTQsCBMQUIxMScsIGV4cGVjdGVkOiAn0JrQvtC70LjRh9C10YHRgtCy0L4g0YDQsNGB0YLQtdGCLCDQv9GA0LjQvNC10L3Rj9C10YLRgdGPINGB0LrQuNC00LrQsCAxNSUnLCBhY3R1YWw6ICfQmNGC0L7Qs9C+0LLQsNGPINGB0YLQvtC40LzQvtGB0YLRjCDQv9C10YDQtdGB0YfQuNGC0LDQvdCwINGB0L4g0YHQutC40LTQutC+0LknLCBzdGF0dXM6ICfQn9GA0L7QudC00LXQvScgfSxcbiAgICAgICAgeyBpZDogNCwgdHlwZTogJ9Ch0LHRgNC+0YEgLyDQvtGC0LzQtdC90LAnLCBhY3Rpb246ICfQo9C80LXQvdGM0YjQtdC90LjQtSDQutC+0LvQuNGH0LXRgdGC0LLQsCDQtNC+IDAg0LjQu9C4IMKr0J7Rh9C40YHRgtC40YLRjMK7JywgZXhwZWN0ZWQ6ICfQn9C+0LfQuNGG0LjRjyDRg9C00LDQu9GP0LXRgtGB0Y8g0LjQtyBzdGF0ZSDRgNC+0LTQuNGC0LXQu9GPJywgYWN0dWFsOiAn0KHQv9C40YHQvtC6INC+0YfQuNGJ0LXQvSwg0LjRgtC+0LPQvtCy0LDRjyDRgdGD0LzQvNCwINGA0LDQstC90LAgMCDigrgnLCBzdGF0dXM6ICfQn9GA0L7QudC00LXQvScgfSxcbiAgICAgICAgeyBpZDogNSwgdHlwZTogJ9CT0YDQsNC90LjRh9C90YvQuSAvINC/0YPRgdGC0L7QuSDQstCy0L7QtCcsIGFjdGlvbjogJ9Ce0YLQv9GA0LDQstC60LAg0L/Rg9GB0YLQvtCz0L4g0L3QsNC30LLQsNC90LjRjyDQsdC70Y7QtNCwINC40LvQuCDQvdC10LLQtdGA0L3QvtCz0L4g0L/RgNC+0LzQvtC60L7QtNCwJywgZXhwZWN0ZWQ6ICfQktGL0LLQvtC0INGB0L7QvtCx0YnQtdC90LjRjyDQvtCxINC+0YjQuNCx0LrQtSDQsdC10Lcg0L/QsNC00LXQvdC40Y8g0LjQvdGC0LXRgNGE0LXQudGB0LAnLCBhY3R1YWw6ICfQntGI0LjQsdC60LAg0LrQvtGA0YDQtdC60YLQvdC+INC+0YLQvtCx0YDQsNC20LDQtdGC0YHRjyDQv9C+0LvRjNC30L7QstCw0YLQtdC70Y4nLCBzdGF0dXM6ICfQn9GA0L7QudC00LXQvScgfVxuICAgICAgXTtcblxuICAgICAgcmV0dXJuIChcbiAgICAgICAgPHNlY3Rpb24gY2xhc3NOYW1lPVwicmVwb3J0LXNlY3Rpb25cIj5cbiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInJlcG9ydC1oZWFkZXJcIiBvbkNsaWNrPXsoKSA9PiBzZXRPcGVuKCFvcGVuKX0+XG4gICAgICAgICAgICA8aDM+8J+TiyDQntGC0YfQtdGCINC00LvRjyDQt9Cw0YnQuNGC0YsgKNCb0LDQsdC+0YDQsNGC0L7RgNC90LDRjyDRgNCw0LHQvtGC0LAg4oSWIDExIOKAoiDQktCw0YDQuNCw0L3RgiDihJYgMjApPC9oMz5cbiAgICAgICAgICAgIDxzcGFuPntvcGVuID8gJ+KWsiDQodCy0LXRgNC90YPRgtGMJyA6ICfilrwg0J/QvtC60LDQt9Cw0YLRjCDRgdGF0LXQvNGDINC4INGC0LXRgdGC0YsnfTwvc3Bhbj5cbiAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgIHtvcGVuICYmIChcbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwicmVwb3J0LWNvbnRlbnRcIj5cbiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJhcmNoLWJveFwiPlxuICAgICAgICAgICAgICAgIDxzdHJvbmc+0J/QvtGC0L7QutC4INC00LDQvdC90YvRhSAoUHJvcHMg0LggU3RhdGUpINC/0L4g0JLQsNGA0LjQsNC90YLRgyDihJYgMjAgwqvQmtC+0L3RgdGC0YDRg9C60YLQvtGAINC30LDQutCw0LfQsMK7Ojwvc3Ryb25nPjxiciAvPlxuICAgICAgICAgICAgICAgIEFwcCAoc3RhdGU6IG1lbnVbXSwgb3JkZXJJdGVtc1tdLCBjYXRlZ29yeSwgc2VhcmNoLCBwcm9tb0Rpc2NvdW50LCB0aGVtZSk8YnIgLz5cbiAgICAgICAgICAgICAgICDilJzilIDilIAgTWVudUl0ZW0gKHByb3BzOiBkaXNoLCBvbkFkZFRvT3JkZXIgfCBzdGF0ZTogc2l6ZSwgd2l0aEFkZG9uKTxiciAvPlxuICAgICAgICAgICAgICAgIOKUnOKUgOKUgCBPcmRlclJvdyAocHJvcHM6IGl0ZW0sIG9uVXBkYXRlUXR5KTxiciAvPlxuICAgICAgICAgICAgICAgIOKUlOKUgOKUgCBBZGREaXNoRm9ybSAocHJvcHM6IG9uQ3JlYXRlRGlzaCB8IHN0YXRlOiBuYW1lLCBjYXRlZ29yeSwgcHJpY2UsIGltYWdlLCBlcnJvcilcbiAgICAgICAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgICAgICAgPGRpdiBzdHlsZT17eyBvdmVyZmxvd1g6ICdhdXRvJyB9fT5cbiAgICAgICAgICAgICAgICA8dGFibGU+XG4gICAgICAgICAgICAgICAgICA8dGhlYWQ+XG4gICAgICAgICAgICAgICAgICAgIDx0cj5cbiAgICAgICAgICAgICAgICAgICAgICA8dGg+4oSWPC90aD5cbiAgICAgICAgICAgICAgICAgICAgICA8dGg+0KHRhtC10L3QsNGA0LjQuTwvdGg+XG4gICAgICAgICAgICAgICAgICAgICAgPHRoPtCU0LXQudGB0YLQstC40LU8L3RoPlxuICAgICAgICAgICAgICAgICAgICAgIDx0aD7QntC20LjQtNCw0LXQvNGL0Lkg0YDQtdC30YPQu9GM0YLQsNGCPC90aD5cbiAgICAgICAgICAgICAgICAgICAgICA8dGg+0KTQsNC60YLQuNGH0LXRgdC60LjQuSDRgNC10LfRg9C70YzRgtCw0YI8L3RoPlxuICAgICAgICAgICAgICAgICAgICAgIDx0aD7QodGC0LDRgtGD0YE8L3RoPlxuICAgICAgICAgICAgICAgICAgICA8L3RyPlxuICAgICAgICAgICAgICAgICAgPC90aGVhZD5cbiAgICAgICAgICAgICAgICAgIDx0Ym9keT5cbiAgICAgICAgICAgICAgICAgICAge3Rlc3RzLm1hcCh0ID0+IChcbiAgICAgICAgICAgICAgICAgICAgICA8dHIga2V5PXt0LmlkfT5cbiAgICAgICAgICAgICAgICAgICAgICAgIDx0ZD57dC5pZH08L3RkPlxuICAgICAgICAgICAgICAgICAgICAgICAgPHRkPjxzdHJvbmc+e3QudHlwZX08L3N0cm9uZz48L3RkPlxuICAgICAgICAgICAgICAgICAgICAgICAgPHRkPnt0LmFjdGlvbn08L3RkPlxuICAgICAgICAgICAgICAgICAgICAgICAgPHRkPnt0LmV4cGVjdGVkfTwvdGQ+XG4gICAgICAgICAgICAgICAgICAgICAgICA8dGQ+e3QuYWN0dWFsfTwvdGQ+XG4gICAgICAgICAgICAgICAgICAgICAgICA8dGQ+PHNwYW4gY2xhc3NOYW1lPVwic3RhdHVzLXBhc3NcIj57dC5zdGF0dXN9PC9zcGFuPjwvdGQ+XG4gICAgICAgICAgICAgICAgICAgICAgPC90cj5cbiAgICAgICAgICAgICAgICAgICAgKSl9XG4gICAgICAgICAgICAgICAgICA8L3Rib2R5PlxuICAgICAgICAgICAgICAgIDwvdGFibGU+XG4gICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgKX1cbiAgICAgICAgPC9zZWN0aW9uPlxuICAgICAgKTtcbiAgICB9XG5cbiAgICAvLyDQoNC+0LTQuNGC0LXQu9GM0YHQutC40Lkg0LrQvtC80L/QvtC90LXQvdGCIEFwcFxuICAgIGZ1bmN0aW9uIEFwcCgpIHtcbiAgICAgIGNvbnN0IFt0aGVtZSwgc2V0VGhlbWVdID0gdXNlU3RhdGUoJ2RhcmsnKTtcbiAgICAgIGNvbnN0IFttZW51LCBzZXRNZW51XSA9IHVzZVN0YXRlKElOSVRJQUxfTUVOVSk7XG4gICAgICBjb25zdCBbYWN0aXZlQ2F0ZWdvcnksIHNldEFjdGl2ZUNhdGVnb3J5XSA9IHVzZVN0YXRlKCfQktGB0LUnKTtcbiAgICAgIGNvbnN0IFtzZWFyY2hRdWVyeSwgc2V0U2VhcmNoUXVlcnldID0gdXNlU3RhdGUoJycpO1xuICAgICAgY29uc3QgW3NvcnRCeSwgc2V0U29ydEJ5XSA9IHVzZVN0YXRlKCdkZWZhdWx0Jyk7XG5cbiAgICAgIC8vINCh0L7RgdGC0L7Rj9C90LjQtSDQt9Cw0LrQsNC30LAgKNGF0YDQsNC90LjRgtGB0Y8g0LIg0YDQvtC00LjRgtC10LvQtSDQv9C+INGD0YHQu9C+0LLQuNGOINCy0LDRgNC40LDQvdGC0LAgMjApXG4gICAgICBjb25zdCBbb3JkZXJJdGVtcywgc2V0T3JkZXJJdGVtc10gPSB1c2VTdGF0ZShbXSk7XG4gICAgICBjb25zdCBbcHJvbW9Db2RlLCBzZXRQcm9tb0NvZGVdID0gdXNlU3RhdGUoJycpO1xuICAgICAgY29uc3QgW2Rpc2NvdW50UGVyY2VudCwgc2V0RGlzY291bnRQZXJjZW50XSA9IHVzZVN0YXRlKDApO1xuICAgICAgY29uc3QgW29yZGVyU3VjY2Vzcywgc2V0T3JkZXJTdWNjZXNzXSA9IHVzZVN0YXRlKCcnKTtcblxuICAgICAgdXNlRWZmZWN0KCgpID0+IHtcbiAgICAgICAgZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgnZGF0YS10aGVtZScsIHRoZW1lKTtcbiAgICAgIH0sIFt0aGVtZV0pO1xuXG4gICAgICAvLyDQlNC+0LHQsNCy0LvQtdC90LjQtSDQuNC70Lgg0YPQstC10LvQuNGH0LXQvdC40LUg0L/QvtC30LjRhtC40Lgg0LIg0LfQsNC60LDQt9C1XG4gICAgICBjb25zdCBoYW5kbGVBZGRUb09yZGVyID0gKG5ld0l0ZW0pID0+IHtcbiAgICAgICAgc2V0T3JkZXJTdWNjZXNzKCcnKTtcbiAgICAgICAgc2V0T3JkZXJJdGVtcyhwcmV2ID0+IHtcbiAgICAgICAgICBjb25zdCBleGlzdGluZyA9IHByZXYuZmluZChpID0+IGkua2V5ID09PSBuZXdJdGVtLmtleSk7XG4gICAgICAgICAgaWYgKGV4aXN0aW5nKSB7XG4gICAgICAgICAgICByZXR1cm4gcHJldi5tYXAoaSA9PiBpLmtleSA9PT0gbmV3SXRlbS5rZXkgPyB7IC4uLmksIHF0eTogaS5xdHkgKyAxIH0gOiBpKTtcbiAgICAgICAgICB9XG4gICAgICAgICAgcmV0dXJuIFsuLi5wcmV2LCB7IC4uLm5ld0l0ZW0sIHF0eTogMSB9XTtcbiAgICAgICAgfSk7XG4gICAgICB9O1xuXG4gICAgICAvLyDQmNC30LzQtdC90LXQvdC40LUg0LrQvtC70LjRh9C10YHRgtCy0LAg0LIg0LrQvtGA0LfQuNC90LVcbiAgICAgIGNvbnN0IGhhbmRsZVVwZGF0ZVF0eSA9IChrZXksIGRlbHRhKSA9PiB7XG4gICAgICAgIHBsYXlUb25lKGRlbHRhID4gMCA/IDU4MCA6IDQyMCk7XG4gICAgICAgIHNldE9yZGVySXRlbXMocHJldiA9PlxuICAgICAgICAgIHByZXZcbiAgICAgICAgICAgIC5tYXAoaXRlbSA9PiBpdGVtLmtleSA9PT0ga2V5ID8geyAuLi5pdGVtLCBxdHk6IGl0ZW0ucXR5ICsgZGVsdGEgfSA6IGl0ZW0pXG4gICAgICAgICAgICAuZmlsdGVyKGl0ZW0gPT4gaXRlbS5xdHkgPiAwKVxuICAgICAgICApO1xuICAgICAgfTtcblxuICAgICAgLy8g0J/RgNC40LzQtdC90LXQvdC40LUg0L/RgNC+0LzQvtC60L7QtNCwXG4gICAgICBjb25zdCBhcHBseVByb21vID0gKCkgPT4ge1xuICAgICAgICBpZiAocHJvbW9Db2RlLnRyaW0oKS50b1VwcGVyQ2FzZSgpID09PSAnTEFCMTEnKSB7XG4gICAgICAgICAgcGxheVRvbmUoNzYwKTtcbiAgICAgICAgICBzZXREaXNjb3VudFBlcmNlbnQoMTUpO1xuICAgICAgICB9IGVsc2Uge1xuICAgICAgICAgIHBsYXlUb25lKDMwMCk7XG4gICAgICAgICAgc2V0RGlzY291bnRQZXJjZW50KDApO1xuICAgICAgICAgIGFsZXJ0KCfQn9GA0L7QvNC+0LrQvtC0INC90LUg0L3QsNC50LTQtdC9LiDQn9C+0L/RgNC+0LHRg9C50YLQtSDQv9GA0L7QvNC+0LrQvtC0IExBQjExINC00LvRjyDRgdC60LjQtNC60LggMTUlLicpO1xuICAgICAgICB9XG4gICAgICB9O1xuXG4gICAgICAvLyDQn9C+0LTRgdGH0LXRgiDQutC+0LvQuNGH0LXRgdGC0LLQsCDQuCDQuNGC0L7Qs9C+0LLQvtC5INGB0YLQvtC40LzQvtGB0YLQuFxuICAgICAgY29uc3QgdG90YWxDb3VudCA9IG9yZGVySXRlbXMucmVkdWNlKChzdW0sIGl0ZW0pID0+IHN1bSArIGl0ZW0ucXR5LCAwKTtcbiAgICAgIGNvbnN0IHN1YnRvdGFsID0gb3JkZXJJdGVtcy5yZWR1Y2UoKHN1bSwgaXRlbSkgPT4gc3VtICsgaXRlbS51bml0UHJpY2UgKiBpdGVtLnF0eSwgMCk7XG4gICAgICBjb25zdCBkaXNjb3VudEFtb3VudCA9IE1hdGgucm91bmQoc3VidG90YWwgKiAoZGlzY291bnRQZXJjZW50IC8gMTAwKSk7XG4gICAgICBjb25zdCBmaW5hbFRvdGFsID0gc3VidG90YWwgLSBkaXNjb3VudEFtb3VudDtcblxuICAgICAgLy8g0KTQuNC70YzRgtGA0LDRhtC40Y8g0Lgg0YHQvtGA0YLQuNGA0L7QstC60LAg0LzQtdC90Y5cbiAgICAgIGNvbnN0IGNhdGVnb3JpZXMgPSBbJ9CS0YHQtScsIC4uLm5ldyBTZXQobWVudS5tYXAoZCA9PiBkLmNhdGVnb3J5KSldO1xuICAgICAgY29uc3QgZmlsdGVyZWRNZW51ID0gbWVudVxuICAgICAgICAuZmlsdGVyKGQgPT4gYWN0aXZlQ2F0ZWdvcnkgPT09ICfQktGB0LUnIHx8IGQuY2F0ZWdvcnkgPT09IGFjdGl2ZUNhdGVnb3J5KVxuICAgICAgICAuZmlsdGVyKGQgPT4gZC5uYW1lLnRvTG93ZXJDYXNlKCkuaW5jbHVkZXMoc2VhcmNoUXVlcnkudG9Mb3dlckNhc2UoKSkpXG4gICAgICAgIC5zb3J0KChhLCBiKSA9PiB7XG4gICAgICAgICAgaWYgKHNvcnRCeSA9PT0gJ3ByaWNlLWFzYycpIHJldHVybiBhLnByaWNlIC0gYi5wcmljZTtcbiAgICAgICAgICBpZiAoc29ydEJ5ID09PSAncHJpY2UtZGVzYycpIHJldHVybiBiLnByaWNlIC0gYS5wcmljZTtcbiAgICAgICAgICByZXR1cm4gMDtcbiAgICAgICAgfSk7XG5cbiAgICAgIGNvbnN0IGhhbmRsZUNoZWNrb3V0ID0gKCkgPT4ge1xuICAgICAgICBwbGF5VG9uZSg4MjApO1xuICAgICAgICBzZXRPcmRlclN1Y2Nlc3MoYNCX0LDQutCw0Lcg0L3QsCDRgdGD0LzQvNGDICR7ZmluYWxUb3RhbC50b0xvY2FsZVN0cmluZygpfSDigrggKCR7dG90YWxDb3VudH0g0L/QvtC3Likg0YPRgdC/0LXRiNC90L4g0L7RhNC+0YDQvNC70LXQvSFgKTtcbiAgICAgICAgc2V0T3JkZXJJdGVtcyhbXSk7XG4gICAgICAgIHNldERpc2NvdW50UGVyY2VudCgwKTtcbiAgICAgICAgc2V0UHJvbW9Db2RlKCcnKTtcbiAgICAgIH07XG5cbiAgICAgIHJldHVybiAoXG4gICAgICAgIDw+XG4gICAgICAgICAgPGhlYWRlcj5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwibG9nb1wiPlxuICAgICAgICAgICAgICA8c3Bhbj7wn429IEdvdXJtZXRDcmFmdDwvc3Bhbj5cbiAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPVwibG9nby1iYWRnZVwiPtCb0LDQsS4g4oSWMTEg4oCiINCS0LDRgNC40LDQvdGCIDIwPC9zcGFuPlxuICAgICAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiaGVhZGVyLWNvbnRyb2xzXCI+XG4gICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwidGhlbWUtZ3JvdXBcIj5cbiAgICAgICAgICAgICAgICB7W1xuICAgICAgICAgICAgICAgICAgeyBpZDogJ2RhcmsnLCBsYWJlbDogJ/CfjJkg0KLQtdC80L3QsNGPJyB9LFxuICAgICAgICAgICAgICAgICAgeyBpZDogJ2xpZ2h0JywgbGFiZWw6ICfimIDvuI8g0KHQstC10YLQu9Cw0Y8nIH0sXG4gICAgICAgICAgICAgICAgICB7IGlkOiAnZW1lcmFsZCcsIGxhYmVsOiAn8J+MvyDQmNC30YPQvNGA0YPQtCcgfVxuICAgICAgICAgICAgICAgIF0ubWFwKHQgPT4gKFxuICAgICAgICAgICAgICAgICAgPGJ1dHRvblxuICAgICAgICAgICAgICAgICAgICBrZXk9e3QuaWR9XG4gICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT17YHRoZW1lLWJ0biAke3RoZW1lID09PSB0LmlkID8gJ2FjdGl2ZScgOiAnJ31gfVxuICAgICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRUaGVtZSh0LmlkKX1cbiAgICAgICAgICAgICAgICAgID5cbiAgICAgICAgICAgICAgICAgICAge3QubGFiZWx9XG4gICAgICAgICAgICAgICAgICA8L2J1dHRvbj5cbiAgICAgICAgICAgICAgICApKX1cbiAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICA8L2hlYWRlcj5cblxuICAgICAgICAgIDxtYWluPlxuICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJ3b3Jrc3BhY2VcIj5cbiAgICAgICAgICAgICAgey8qINCb0LXQstCw0Y8g0LrQvtC70L7QvdC60LA6INCa0LDRgtCw0LvQvtCzINCx0LvRjtC0ICovfVxuICAgICAgICAgICAgICA8ZGl2PlxuICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwidG9vbGJhclwiPlxuICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJjYXRlZ29yaWVzXCI+XG4gICAgICAgICAgICAgICAgICAgIHtjYXRlZ29yaWVzLm1hcChjYXQgPT4gKFxuICAgICAgICAgICAgICAgICAgICAgIDxidXR0b25cbiAgICAgICAgICAgICAgICAgICAgICAgIGtleT17Y2F0fVxuICAgICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPXtgY2F0LWJ0biAke2FjdGl2ZUNhdGVnb3J5ID09PSBjYXQgPyAnYWN0aXZlJyA6ICcnfWB9XG4gICAgICAgICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRBY3RpdmVDYXRlZ29yeShjYXQpfVxuICAgICAgICAgICAgICAgICAgICAgID5cbiAgICAgICAgICAgICAgICAgICAgICAgIHtjYXR9XG4gICAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+XG4gICAgICAgICAgICAgICAgICAgICkpfVxuICAgICAgICAgICAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwic2VhcmNoLWJveFwiPlxuICAgICAgICAgICAgICAgICAgICA8aW5wdXRcbiAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9XCJzZWFyY2gtaW5wdXRcIlxuICAgICAgICAgICAgICAgICAgICAgIHR5cGU9XCJ0ZXh0XCJcbiAgICAgICAgICAgICAgICAgICAgICBwbGFjZWhvbGRlcj1cItCf0L7QuNGB0Log0LHQu9GO0LTQsC4uLlwiXG4gICAgICAgICAgICAgICAgICAgICAgdmFsdWU9e3NlYXJjaFF1ZXJ5fVxuICAgICAgICAgICAgICAgICAgICAgIG9uQ2hhbmdlPXsoZSkgPT4gc2V0U2VhcmNoUXVlcnkoZS50YXJnZXQudmFsdWUpfVxuICAgICAgICAgICAgICAgICAgICAvPlxuICAgICAgICAgICAgICAgICAgICA8c2VsZWN0XG4gICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPVwic29ydC1zZWxlY3RcIlxuICAgICAgICAgICAgICAgICAgICAgIHZhbHVlPXtzb3J0Qnl9XG4gICAgICAgICAgICAgICAgICAgICAgb25DaGFuZ2U9eyhlKSA9PiBzZXRTb3J0QnkoZS50YXJnZXQudmFsdWUpfVxuICAgICAgICAgICAgICAgICAgICA+XG4gICAgICAgICAgICAgICAgICAgICAgPG9wdGlvbiB2YWx1ZT1cImRlZmF1bHRcIj7Qn9C+INGD0LzQvtC70YfQsNC90LjRjjwvb3B0aW9uPlxuICAgICAgICAgICAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9XCJwcmljZS1hc2NcIj7QodC90LDRh9Cw0LvQsCDQtNC10YjQtdCy0LvQtTwvb3B0aW9uPlxuICAgICAgICAgICAgICAgICAgICAgIDxvcHRpb24gdmFsdWU9XCJwcmljZS1kZXNjXCI+0KHQvdCw0YfQsNC70LAg0LTQvtGA0L7QttC1PC9vcHRpb24+XG4gICAgICAgICAgICAgICAgICAgIDwvc2VsZWN0PlxuICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cIm1lbnUtZ3JpZFwiPlxuICAgICAgICAgICAgICAgICAge2ZpbHRlcmVkTWVudS5tYXAoZGlzaCA9PiAoXG4gICAgICAgICAgICAgICAgICAgIDxNZW51SXRlbVxuICAgICAgICAgICAgICAgICAgICAgIGtleT17ZGlzaC5pZH1cbiAgICAgICAgICAgICAgICAgICAgICBkaXNoPXtkaXNofVxuICAgICAgICAgICAgICAgICAgICAgIG9uQWRkVG9PcmRlcj17aGFuZGxlQWRkVG9PcmRlcn1cbiAgICAgICAgICAgICAgICAgICAgLz5cbiAgICAgICAgICAgICAgICAgICkpfVxuICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgICAgICB7Lyog0J/RgNCw0LLQsNGPINC60L7Qu9C+0L3QutCwOiDQmtC+0L3RgdGC0YDRg9C60YLQvtGAINC30LDQutCw0LfQsCAoc3RhdGUg0YDQvtC00LjRgtC10LvRjykgKi99XG4gICAgICAgICAgICAgIDxhc2lkZSBjbGFzc05hbWU9XCJvcmRlci1wYW5lbFwiPlxuICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwib3JkZXItaGVhZGVyXCI+XG4gICAgICAgICAgICAgICAgICA8aDI+8J+nviDQktCw0Ygg0LfQsNC60LDQtyAoe3RvdGFsQ291bnR9KTwvaDI+XG4gICAgICAgICAgICAgICAgICB7b3JkZXJJdGVtcy5sZW5ndGggPiAwICYmIChcbiAgICAgICAgICAgICAgICAgICAgPGJ1dHRvblxuICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT1cImJ0bi1jbGVhclwiXG4gICAgICAgICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4geyBzZXRPcmRlckl0ZW1zKFtdKTsgc2V0RGlzY291bnRQZXJjZW50KDApOyB9fVxuICAgICAgICAgICAgICAgICAgICA+XG4gICAgICAgICAgICAgICAgICAgICAg0J7Rh9C40YHRgtC40YLRjFxuICAgICAgICAgICAgICAgICAgICA8L2J1dHRvbj5cbiAgICAgICAgICAgICAgICAgICl9XG4gICAgICAgICAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgICAgICAgICB7b3JkZXJJdGVtcy5sZW5ndGggPT09IDAgPyAoXG4gICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImVtcHR5LWNhcnRcIj5cbiAgICAgICAgICAgICAgICAgICAg0JLRi9Cx0LXRgNC40YLQtSDQsdC70Y7QtNCwINC40Lcg0LzQtdC90Y4g0YHQu9C10LLQsCwg0L3QsNGB0YLRgNC+0LnRgtC1INGA0LDQt9C80LXRgCDQv9C+0YDRhtC40Lgg0LjQu9C4INC00L7QsdCw0LLQutC4INC4INC90LDQttC80LjRgtC1IMKrKyDQkiDQt9Cw0LrQsNC3wrsuXG4gICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICApIDogKFxuICAgICAgICAgICAgICAgICAgPD5cbiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJvcmRlci1saXN0XCI+XG4gICAgICAgICAgICAgICAgICAgICAge29yZGVySXRlbXMubWFwKGl0ZW0gPT4gKFxuICAgICAgICAgICAgICAgICAgICAgICAgPE9yZGVyUm93XG4gICAgICAgICAgICAgICAgICAgICAgICAgIGtleT17aXRlbS5rZXl9XG4gICAgICAgICAgICAgICAgICAgICAgICAgIGl0ZW09e2l0ZW19XG4gICAgICAgICAgICAgICAgICAgICAgICAgIG9uVXBkYXRlUXR5PXtoYW5kbGVVcGRhdGVRdHl9XG4gICAgICAgICAgICAgICAgICAgICAgICAvPlxuICAgICAgICAgICAgICAgICAgICAgICkpfVxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInByb21vLXJvd1wiPlxuICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dFxuICAgICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPVwicHJvbW8taW5wdXRcIlxuICAgICAgICAgICAgICAgICAgICAgICAgdHlwZT1cInRleHRcIlxuICAgICAgICAgICAgICAgICAgICAgICAgcGxhY2Vob2xkZXI9XCLQn9GA0L7QvNC+0LrQvtC0ICjQstCy0LXQtNC40YLQtSBMQUIxMSlcIlxuICAgICAgICAgICAgICAgICAgICAgICAgdmFsdWU9e3Byb21vQ29kZX1cbiAgICAgICAgICAgICAgICAgICAgICAgIG9uQ2hhbmdlPXsoZSkgPT4gc2V0UHJvbW9Db2RlKGUudGFyZ2V0LnZhbHVlKX1cbiAgICAgICAgICAgICAgICAgICAgICAvPlxuICAgICAgICAgICAgICAgICAgICAgIDxidXR0b24gY2xhc3NOYW1lPVwiYnRuLXByb21vXCIgb25DbGljaz17YXBwbHlQcm9tb30+T0s8L2J1dHRvbj5cbiAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJzdW1tYXJ5LWJveFwiPlxuICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwic3VtbWFyeS1saW5lXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICA8c3Bhbj7QktGL0LHRgNCw0L3QviDQv9C+0LfQuNGG0LjQuTo8L3NwYW4+XG4gICAgICAgICAgICAgICAgICAgICAgICA8c3Ryb25nPnt0b3RhbENvdW50fSDRiNGCLjwvc3Ryb25nPlxuICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPVwic3VtbWFyeS1saW5lXCI+XG4gICAgICAgICAgICAgICAgICAgICAgICA8c3Bhbj7QodGD0LzQvNCwINCx0LXQtyDRgdC60LjQtNC60Lg6PC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4+e3N1YnRvdGFsLnRvTG9jYWxlU3RyaW5nKCl9IOKCuDwvc3Bhbj5cbiAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cbiAgICAgICAgICAgICAgICAgICAgICB7ZGlzY291bnRQZXJjZW50ID4gMCAmJiAoXG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInN1bW1hcnktbGluZVwiIHN0eWxlPXt7IGNvbG9yOiAndmFyKC0tc3VjY2VzcyknIH19PlxuICAgICAgICAgICAgICAgICAgICAgICAgICA8c3Bhbj7QodC60LjQtNC60LAg0L/QviDQv9GA0L7QvNC+0LrQvtC00YMgKHtkaXNjb3VudFBlcmNlbnR9JSk6PC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgICA8c3Bhbj7iiJJ7ZGlzY291bnRBbW91bnQudG9Mb2NhbGVTdHJpbmcoKX0g4oK4PC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+XG4gICAgICAgICAgICAgICAgICAgICAgKX1cbiAgICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cInN1bW1hcnktdG90YWxcIj5cbiAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuPtCY0YLQvtCz0L46PC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4+e2ZpbmFsVG90YWwudG9Mb2NhbGVTdHJpbmcoKX0g4oK4PC9zcGFuPlxuICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxuICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cblxuICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIGNsYXNzTmFtZT1cImJ0bi1jaGVja291dFwiIG9uQ2xpY2s9e2hhbmRsZUNoZWNrb3V0fT5cbiAgICAgICAgICAgICAgICAgICAgICDQntGE0L7RgNC80LjRgtGMINC30LDQutCw0LdcbiAgICAgICAgICAgICAgICAgICAgPC9idXR0b24+XG4gICAgICAgICAgICAgICAgICA8Lz5cbiAgICAgICAgICAgICAgICApfVxuXG4gICAgICAgICAgICAgICAge29yZGVyU3VjY2VzcyAmJiA8ZGl2IGNsYXNzTmFtZT1cInRvYXN0LW1zZ1wiPntvcmRlclN1Y2Nlc3N9PC9kaXY+fVxuICAgICAgICAgICAgICA8L2FzaWRlPlxuICAgICAgICAgICAgPC9kaXY+XG5cbiAgICAgICAgICAgIDxBZGREaXNoRm9ybSBvbkNyZWF0ZURpc2g9eyhuZXdEaXNoKSA9PiBzZXRNZW51KHByZXYgPT4gW25ld0Rpc2gsIC4uLnByZXZdKX0gLz5cbiAgICAgICAgICAgIDxEZWZlbnNlUmVwb3J0IC8+XG4gICAgICAgICAgPC9tYWluPlxuXG4gICAgICAgICAgPGZvb3Rlcj5cbiAgICAgICAgICAgINCU0LjRgdGG0LjQv9C70LjQvdCwIMKr0K/Qt9GL0LrQuCDQuCDRgtC10YXQvdC+0LvQvtCz0LjRjyDQv9GA0L7Qs9GA0LDQvNC80LjRgNC+0LLQsNC90LjRj8K7IOKAoiDQm9Cw0LHQvtGA0LDRgtC+0YDQvdCw0Y8g0YDQsNCx0L7RgtCwIOKEliAxMSDigKIg0JLQsNGA0LjQsNC90YIg4oSWIDIwICgyMDI2KVxuICAgICAgICAgIDwvZm9vdGVyPlxuICAgICAgICA8Lz5cbiAgICAgICk7XG4gICAgfVxuXG4gICAgY29uc3Qgcm9vdCA9IFJlYWN0RE9NLmNyZWF0ZVJvb3QoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Jvb3QnKSk7XG4gICAgcm9vdC5yZW5kZXIoPEFwcCAvPik7XG4gICJdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7O0FBQ0ksYUFBZ0MsS0FBSztFQUE3QixRQUFRLFVBQVIsUUFBUTtFQUFFLFNBQVMsVUFBVCxTQUFTOztBQUUzQjtBQUNBLElBQU0sWUFBWSxHQUFHLENBQ25CO0VBQ0UsRUFBRSxFQUFFLENBQUM7RUFDTCxJQUFJLEVBQUUsdUJBQXVCO0VBQzdCLFFBQVEsRUFBRSxTQUFTO0VBQ25CLEtBQUssRUFBRSxJQUFJO0VBQ1gsSUFBSSxFQUFFLEdBQUc7RUFDVCxJQUFJLEVBQUUsMkZBQTJGO0VBQ2pHLEtBQUssRUFBRSw4RkFBOEY7RUFDckcsU0FBUyxFQUFFLHFCQUFxQjtFQUNoQyxVQUFVLEVBQUU7QUFDZCxDQUFDLEVBQ0Q7RUFDRSxFQUFFLEVBQUUsQ0FBQztFQUNMLElBQUksRUFBRSwrQkFBK0I7RUFDckMsUUFBUSxFQUFFLE9BQU87RUFDakIsS0FBSyxFQUFFLElBQUk7RUFDWCxJQUFJLEVBQUUsR0FBRztFQUNULElBQUksRUFBRSxtRkFBbUY7RUFDekYsS0FBSyxFQUFFLDhGQUE4RjtFQUNyRyxTQUFTLEVBQUUsZUFBZTtFQUMxQixVQUFVLEVBQUU7QUFDZCxDQUFDLEVBQ0Q7RUFDRSxFQUFFLEVBQUUsQ0FBQztFQUNMLElBQUksRUFBRSw0QkFBNEI7RUFDbEMsUUFBUSxFQUFFLE9BQU87RUFDakIsS0FBSyxFQUFFLElBQUk7RUFDWCxJQUFJLEVBQUUsR0FBRztFQUNULElBQUksRUFBRSxrRkFBa0Y7RUFDeEYsS0FBSyxFQUFFLDhGQUE4RjtFQUNyRyxTQUFTLEVBQUUscUJBQXFCO0VBQ2hDLFVBQVUsRUFBRTtBQUNkLENBQUMsRUFDRDtFQUNFLEVBQUUsRUFBRSxDQUFDO0VBQ0wsSUFBSSxFQUFFLG1CQUFtQjtFQUN6QixRQUFRLEVBQUUsU0FBUztFQUNuQixLQUFLLEVBQUUsSUFBSTtFQUNYLElBQUks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</script></head>
+  <body>
+  
+    <div id="root"><header><div class="logo"><span>🍽 GourmetCraft</span><span class="logo-badge">Лаб. №11 • Вариант 20</span></div><div class="header-controls"><div class="theme-group"><button class="theme-btn active">🌙 Темная</button><button class="theme-btn ">☀️ Светлая</button><button class="theme-btn ">🌿 Изумруд</button></div></div></header><main><div class="workspace"><div><div class="toolbar"><div class="categories"><button class="cat-btn active">Все</button><button class="cat-btn ">Бургеры</button><button class="cat-btn ">Пицца</button><button class="cat-btn ">Роллы</button><button class="cat-btn ">Горячее</button><button class="cat-btn ">Салаты</button><button class="cat-btn ">Десерты</button></div><div class="search-box"><input class="search-input" type="text" placeholder="Поиск блюда..." value=""><select class="sort-select"><option value="default">По умолчанию</option><option value="price-asc">Сначала дешевле</option><option value="price-desc">Сначала дороже</option></select></div></div><div class="menu-grid"><article class="dish-card"><div class="dish-img-wrap"><img class="dish-img" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&amp;fit=crop&amp;w=700&amp;q=80" alt="Бургер «Черный Ангус»"><span class="dish-badge">Бургеры</span><span class="dish-kcal">680 ккал</span></div><div class="dish-body"><h3 class="dish-title">Бургер «Черный Ангус»</h3><p class="dish-desc">Мраморная говядина на гриле, выдержанный чеддер, карамелизированный лук и фирменный соус.</p><div class="options-box"><div class="size-row"><button type="button" class="size-btn active">Стандарт</button><button type="button" class="size-btn ">Большая (XL)</button></div><label class="addon-label"><span><input type="checkbox">Двойной бекон и сыр</span><strong>+550 ₸</strong></label></div><div class="dish-footer"><span class="dish-price">2,890 ₸</span><button type="button" class="btn-add">+ В заказ</button></div></div></article><article class="dish-card"><div class="dish-img-wrap"><img class="dish-img" src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&amp;fit=crop&amp;w=700&amp;q=80" alt="Пицца «Маргарита Неаполитана»"><span class="dish-badge">Пицца</span><span class="dish-kcal">820 ккал</span></div><div class="dish-body"><h3 class="dish-title">Пицца «Маргарита Неаполитана»</h3><p class="dish-desc">Тонкое тесто на закваске, томаты Сан-Марцано, свежая моцарелла и листья базилика.</p><div class="options-box"><div class="size-row"><button type="button" class="size-btn active">Стандарт</button><button type="button" class="size-btn ">Большая (XL)</button></div><label class="addon-label"><span><input type="checkbox">Сырный бортик</span><strong>+650 ₸</strong></label></div><div class="dish-footer"><span class="dish-price">3,200 ₸</span><button type="button" class="btn-add">+ В заказ</button></div></div></article><article class="dish-card"><div class="dish-img-wrap"><img class="dish-img" src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&amp;fit=crop&amp;w=700&amp;q=80" alt="Ролл «Филадельфия Премиум»"><span class="dish-badge">Роллы</span><span class="dish-kcal">490 ккал</span></div><div class="dish-body"><h3 class="dish-title">Ролл «Филадельфия Премиум»</h3><p class="dish-desc">Охлажденный норвежский лосось, сливочный сыр, спелый авокадо и хрустящий огурец.</p><div class="options-box"><div class="size-row"><button type="button" class="size-btn active">Стандарт</button><button type="button" class="size-btn ">Большая (XL)</button></div><label class="addon-label"><span><input type="checkbox">Икра тобико и унаги</span><strong>+490 ₸</strong></label></div><div class="dish-footer"><span class="dish-price">3,450 ₸</span><button type="button" class="btn-add">+ В заказ</button></div></div></article><article class="dish-card"><div class="dish-img-wrap"><img class="dish-img" src="https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&amp;fit=crop&amp;w=700&amp;q=80" alt="Паста «Карбонара»"><span class="dish-badge">Горячее</span><span class="dish-kcal">610 ккал</span></div><div class="dish-body"><h3 class="dish-title">Паста «Карбонара»</h3><p class="dish-desc">Спагетти аль денте, хрустящая панчетта, соус из желтков и тертый пармезан 24 мес.</p><div class="options-box"><div class="size-row"><button type="button" class="size-btn active">Стандарт</button><button type="button" class="size-btn ">Большая (XL)</button></div><label class="addon-label"><span><input type="checkbox">Трюфельное масло</span><strong>+450 ₸</strong></label></div><div class="dish-footer"><span class="dish-price">2,650 ₸</span><button type="button" class="btn-add">+ В заказ</button></div></div></article><article class="dish-card"><div class="dish-img-wrap"><img class="dish-img" src="https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&amp;fit=crop&amp;w=700&amp;q=80" alt="Салат «Цезарь с цыпленком»"><span class="dish-badge">Салаты</span><span class="dish-kcal">380 ккал</span></div><div class="dish-body"><h3 class="dish-title">Салат «Цезарь с цыпленком»</h3><p class="dish-desc">Листья романо, куриное филе су-вид, чесночные крутоны, пармезан и классический соус.</p><div class="options-box"><div class="size-row"><button type="button" class="size-btn active">Стандарт</button><button type="button" class="size-btn ">Большая (XL)</button></div><label class="addon-label"><span><input type="checkbox">Тигровые креветки</span><strong>+790 ₸</strong></label></div><div class="dish-footer"><span class="dish-price">2,190 ₸</span><button type="button" class="btn-add">+ В заказ</button></div></div></article><article class="dish-card"><div class="dish-img-wrap"><img class="dish-img" src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&amp;fit=crop&amp;w=700&amp;q=80" alt="Десерт «Тирамису Классик»"><span class="dish-badge">Десерты</span><span class="dish-kcal">410 ккал</span></div><div class="dish-body"><h3 class="dish-title">Десерт «Тирамису Классик»</h3><p class="dish-desc">Воздушный крем на основе маскарпоне, печенье савоярди, пропитанное эспрессо, и какао.</p><div class="options-box"><div class="size-row"><button type="button" class="size-btn active">Стандарт</button><button type="button" class="size-btn ">Большая (XL)</button></div><label class="addon-label"><span><input type="checkbox">Шарик пломбира</span><strong>+350 ₸</strong></label></div><div class="dish-footer"><span class="dish-price">1,750 ₸</span><button type="button" class="btn-add">+ В заказ</button></div></div></article></div></div><aside class="order-panel"><div class="order-header"><h2>🧾 Ваш заказ (0)</h2></div><div class="empty-cart">Выберите блюда из меню слева, настройте размер порции или добавки и нажмите «+ В заказ».</div><div class="toast-msg">Заказ на сумму 3,450 ₸ (1 поз.) успешно оформлен!</div></aside></div><section class="custom-dish-bar"><h3>🍳 Добавить свое блюдо в каталог (с фото из интернета)</h3><form class="custom-form"><div class="field"><label>Название блюда</label><input type="text" placeholder="Например: Стейк Рибай" value=""></div><div class="field"><label>Категория</label><select><option value="Бургеры">Бургеры</option><option value="Пицца">Пицца</option><option value="Роллы">Роллы</option><option value="Горячее">Горячее</option><option value="Салаты">Салаты</option><option value="Десерты">Десерты</option></select></div><div class="field"><label>Цена (₸)</label><input type="number" value="2500"></div><div class="field"><label>Ссылка на фото (URL)</label><input type="url" placeholder="https://images.unsplash.com/..." value=""></div><button type="submit" class="btn-add" style="height: 38px;">+ Добавить в меню</button></form></section><section class="report-section"><div class="report-header"><h3>📋 Отчет для защиты (Лабораторная работа № 11 • Вариант № 20)</h3><span>▼ Показать схему и тесты</span></div></section></main><footer>Дисциплина «Языки и технология программирования» • Лабораторная работа № 11 • Вариант № 20 (2026)</footer></div>
+  
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+  
+      // Исходный каталог блюд с фотографиями из интернета (Unsplash)
+      const INITIAL_MENU = [
+        {
+          id: 1,
+          name: 'Бургер «Черный Ангус»',
+          category: 'Бургеры',
+          price: 2890,
+          kcal: 680,
+          desc: 'Мраморная говядина на гриле, выдержанный чеддер, карамелизированный лук и фирменный соус.',
+          image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=700&q=80',
+          addonName: 'Двойной бекон и сыр',
+          addonPrice: 550
+        },
+        {
+          id: 2,
+          name: 'Пицца «Маргарита Неаполитана»',
+          category: 'Пицца',
+          price: 3200,
+          kcal: 820,
+          desc: 'Тонкое тесто на закваске, томаты Сан-Марцано, свежая моцарелла и листья базилика.',
+          image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=700&q=80',
+          addonName: 'Сырный бортик',
+          addonPrice: 650
+        },
+        {
+          id: 3,
+          name: 'Ролл «Филадельфия Премиум»',
+          category: 'Роллы',
+          price: 3450,
+          kcal: 490,
+          desc: 'Охлажденный норвежский лосось, сливочный сыр, спелый авокадо и хрустящий огурец.',
+          image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=700&q=80',
+          addonName: 'Икра тобико и унаги',
+          addonPrice: 490
+        },
+        {
+          id: 4,
+          name: 'Паста «Карбонара»',
+          category: 'Горячее',
+          price: 2650,
+          kcal: 610,
+          desc: 'Спагетти аль денте, хрустящая панчетта, соус из желтков и тертый пармезан 24 мес.',
+          image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=700&q=80',
+          addonName: 'Трюфельное масло',
+          addonPrice: 450
+        },
+        {
+          id: 5,
+          name: 'Салат «Цезарь с цыпленком»',
+          category: 'Салаты',
+          price: 2190,
+          kcal: 380,
+          desc: 'Листья романо, куриное филе су-вид, чесночные крутоны, пармезан и классический соус.',
+          image: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&w=700&q=80',
+          addonName: 'Тигровые креветки',
+          addonPrice: 790
+        },
+        {
+          id: 6,
+          name: 'Десерт «Тирамису Классик»',
+          category: 'Десерты',
+          price: 1750,
+          kcal: 410,
+          desc: 'Воздушный крем на основе маскарпоне, печенье савоярди, пропитанное эспрессо, и какао.',
+          image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=700&q=80',
+          addonName: 'Шарик пломбира',
+          addonPrice: 350
+        }
+      ];
+  
+      // Звуковой отклик
+      function playTone(freq = 540) {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime);
+          gain.gain.setValueAtTime(0.06, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.08);
+        } catch (e) {}
+      }
+  
+      // Дочерний компонент 1: Карточка блюда (MenuItem)
+      // Получает объект блюда через props и передает событие выбора родителю
+      function MenuItem({ dish, onAddToOrder }) {
+        const [size, setSize] = useState('Стандарт');
+        const [withAddon, setWithAddon] = useState(false);
+  
+        // Расчет итоговой цены конкретной конфигурации
+        const sizeMultiplier = size === 'Большая (XL)' ? 1.25 : 1;
+        const finalPrice = Math.round(dish.price * sizeMultiplier) + (withAddon ? dish.addonPrice : 0);
+  
+        const handleAdd = () => {
+          playTone(640);
+          onAddToOrder({
+            key: `${dish.id}-${size}-${withAddon}`,
+            id: dish.id,
+            name: dish.name,
+            image: dish.image,
+            size,
+            addon: withAddon ? dish.addonName : null,
+            unitPrice: finalPrice
+          });
+        };
+  
+        return (
+          <article className="dish-card">
+            <div className="dish-img-wrap">
+              <img
+                className="dish-img"
+                src={dish.image}
+                alt={dish.name}
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=700&q=80';
+                }}
+              />
+              <span className="dish-badge">{dish.category}</span>
+              <span className="dish-kcal">{dish.kcal} ккал</span>
+            </div>
+  
+            <div className="dish-body">
+              <h3 className="dish-title">{dish.name}</h3>
+              <p className="dish-desc">{dish.desc}</p>
+  
+              <div className="options-box">
+                <div className="size-row">
+                  {['Стандарт', 'Большая (XL)'].map(s => (
+                    <button
+                      key={s}
+                      type="button"
+                      className={`size-btn ${size === s ? 'active' : ''}`}
+                      onClick={() => setSize(s)}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+  
+                {dish.addonName && (
+                  <label className="addon-label">
+                    <span>
+                      <input
+                        type="checkbox"
+                        checked={withAddon}
+                        onChange={(e) => setWithAddon(e.target.checked)}
+                      />
+                      {dish.addonName}
+                    </span>
+                    <strong>+{dish.addonPrice} ₸</strong>
+                  </label>
+                )}
+              </div>
+  
+              <div className="dish-footer">
+                <span className="dish-price">{finalPrice.toLocaleString()} ₸</span>
+                <button type="button" className="btn-add" onClick={handleAdd}>
+                  + В заказ
+                </button>
+              </div>
+            </div>
+          </article>
+        );
+      }
+  
+      // Дочерний компонент 2: Позиция в корзине заказа (OrderRow)
+      function OrderRow({ item, onUpdateQty }) {
+        return (
+          <div className="order-item">
+            <img className="order-item-img" src={item.image} alt={item.name} />
+            <div className="order-item-info">
+              <div className="order-item-title">{item.name}</div>
+              <div className="order-item-meta">
+                {item.size}{item.addon ? ` • + ${item.addon}` : ''}
+              </div>
+              <div className="order-item-price">
+                {(item.unitPrice * item.qty).toLocaleString()} ₸
+              </div>
+            </div>
+  
+            <div className="qty-controls">
+              <button className="qty-btn" onClick={() => onUpdateQty(item.key, -1)}>−</button>
+              <span className="qty-val">{item.qty}</span>
+              <button className="qty-btn" onClick={() => onUpdateQty(item.key, 1)}>+</button>
+            </div>
+          </div>
+        );
+      }
+  
+      // Дочерний компонент 3: Форма добавления нового блюда в меню с фото по URL
+      function AddDishForm({ onCreateDish }) {
+        const [name, setName] = useState('');
+        const [category, setCategory] = useState('Бургеры');
+        const [price, setPrice] = useState(2500);
+        const [image, setImage] = useState('');
+        const [error, setError] = useState('');
+  
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          if (!name.trim()) {
+            setError('Введите название блюда.');
+            return;
+          }
+          const numPrice = Number(price);
+          if (isNaN(numPrice) || numPrice <= 0) {
+            setError('Укажите корректную цену больше 0.');
+            return;
+          }
+  
+          setError('');
+          playTone(720);
+          onCreateDish({
+            id: Date.now(),
+            name: name.trim(),
+            category,
+            price: numPrice,
+            kcal: 520,
+            desc: 'Авторское блюдо, добавленное пользователем в интерактивное меню.',
+            image: image.trim() || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=700&q=80',
+            addonName: 'Фирменный соус',
+            addonPrice: 350
+          });
+          setName('');
+          setImage('');
+        };
+  
+        return (
+          <section className="custom-dish-bar">
+            <h3>🍳 Добавить свое блюдо в каталог (с фото из интернета)</h3>
+            <form className="custom-form" onSubmit={handleSubmit}>
+              <div className="field">
+                <label>Название блюда</label>
+                <input
+                  type="text"
+                  placeholder="Например: Стейк Рибай"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+  
+              <div className="field">
+                <label>Категория</label>
+                <select value={category} onChange={(e) => setCategory(e.target.value)}>
+                  <option value="Бургеры">Бургеры</option>
+                  <option value="Пицца">Пицца</option>
+                  <option value="Роллы">Роллы</option>
+                  <option value="Горячее">Горячее</option>
+                  <option value="Салаты">Салаты</option>
+                  <option value="Десерты">Десерты</option>
+                </select>
+              </div>
+  
+              <div className="field">
+                <label>Цена (₸)</label>
+                <input
+                  type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+              </div>
+  
+              <div className="field">
+                <label>Ссылка на фото (URL)</label>
+                <input
+                  type="url"
+                  placeholder="https://images.unsplash.com/..."
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
+                />
+              </div>
+  
+              <button type="submit" className="btn-add" style={{ height: '38px' }}>
+                + Добавить в меню
+              </button>
+            </form>
+            {error && <div style={{ color: 'var(--danger)', fontSize: '13px', marginTop: '8px' }}>{error}</div>}
+          </section>
+        );
+      }
+  
+      // Дочерний компонент 4: Встроенный отчет для защиты варианта № 20
+      function DefenseReport() {
+        const [open, setOpen] = useState(false);
+  
+        const tests = [
+          { id: 1, type: 'Начальное состояние', action: 'Открытие страницы', expected: 'Отображаются 6 блюд с фото, корзина пуста (0 ₸)', actual: 'Меню загружено, счетчик 0 шт., итог 0 ₸', status: 'Пройден' },
+          { id: 2, type: 'Основное действие', action: 'Выбор размера XL и клик «+ В заказ»', expected: 'Блюдо добавлено в правую панель, сумма пересчитана', actual: 'Позиция появилась в заказе, цена ×1.25 учтена', status: 'Пройден' },
+          { id: 3, type: 'Повторное действие', action: 'Увеличение количества (+) и ввод промокода LAB11', expected: 'Количество растет, применяется скидка 15%', actual: 'Итоговая стоимость пересчитана со скидкой', status: 'Пройден' },
+          { id: 4, type: 'Сброс / отмена', action: 'Уменьшение количества до 0 или «Очистить»', expected: 'Позиция удаляется из state родителя', actual: 'Список очищен, итоговая сумма равна 0 ₸', status: 'Пройден' },
+          { id: 5, type: 'Граничный / пустой ввод', action: 'Отправка пустого названия блюда или неверного промокода', expected: 'Вывод сообщения об ошибке без падения интерфейса', actual: 'Ошибка корректно отображается пользователю', status: 'Пройден' }
+        ];
+  
+        return (
+          <section className="report-section">
+            <div className="report-header" onClick={() => setOpen(!open)}>
+              <h3>📋 Отчет для защиты (Лабораторная работа № 11 • Вариант № 20)</h3>
+              <span>{open ? '▲ Свернуть' : '▼ Показать схему и тесты'}</span>
+            </div>
+  
+            {open && (
+              <div className="report-content">
+                <div className="arch-box">
+                  <strong>Потоки данных (Props и State) по Варианту № 20 «Конструктор заказа»:</strong><br />
+                  App (state: menu[], orderItems[], category, search, promoDiscount, theme)<br />
+                  ├── MenuItem (props: dish, onAddToOrder | state: size, withAddon)<br />
+                  ├── OrderRow (props: item, onUpdateQty)<br />
+                  └── AddDishForm (props: onCreateDish | state: name, category, price, image, error)
+                </div>
+  
+                <div style={{ overflowX: 'auto' }}>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>№</th>
+                        <th>Сценарий</th>
+                        <th>Действие</th>
+                        <th>Ожидаемый результат</th>
+                        <th>Фактический результат</th>
+                        <th>Статус</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tests.map(t => (
+                        <tr key={t.id}>
+                          <td>{t.id}</td>
+                          <td><strong>{t.type}</strong></td>
+                          <td>{t.action}</td>
+                          <td>{t.expected}</td>
+                          <td>{t.actual}</td>
+                          <td><span className="status-pass">{t.status}</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </section>
+        );
+      }
+  
+      // Родительский компонент App
+      function App() {
+        const [theme, setTheme] = useState('dark');
+        const [menu, setMenu] = useState(INITIAL_MENU);
+        const [activeCategory, setActiveCategory] = useState('Все');
+        const [searchQuery, setSearchQuery] = useState('');
+        const [sortBy, setSortBy] = useState('default');
+  
+        // Состояние заказа (хранится в родителе по условию варианта 20)
+        const [orderItems, setOrderItems] = useState([]);
+        const [promoCode, setPromoCode] = useState('');
+        const [discountPercent, setDiscountPercent] = useState(0);
+        const [orderSuccess, setOrderSuccess] = useState('');
+  
+        useEffect(() => {
+          document.documentElement.setAttribute('data-theme', theme);
+        }, [theme]);
+  
+        // Добавление или увеличение позиции в заказе
+        const handleAddToOrder = (newItem) => {
+          setOrderSuccess('');
+          setOrderItems(prev => {
+            const existing = prev.find(i => i.key === newItem.key);
+            if (existing) {
+              return prev.map(i => i.key === newItem.key ? { ...i, qty: i.qty + 1 } : i);
+            }
+            return [...prev, { ...newItem, qty: 1 }];
+          });
+        };
+  
+        // Изменение количества в корзине
+        const handleUpdateQty = (key, delta) => {
+          playTone(delta > 0 ? 580 : 420);
+          setOrderItems(prev =>
+            prev
+              .map(item => item.key === key ? { ...item, qty: item.qty + delta } : item)
+              .filter(item => item.qty > 0)
+          );
+        };
+  
+        // Применение промокода
+        const applyPromo = () => {
+          if (promoCode.trim().toUpperCase() === 'LAB11') {
+            playTone(760);
+            setDiscountPercent(15);
+          } else {
+            playTone(300);
+            setDiscountPercent(0);
+            alert('Промокод не найден. Попробуйте промокод LAB11 для скидки 15%.');
+          }
+        };
+  
+        // Подсчет количества и итоговой стоимости
+        const totalCount = orderItems.reduce((sum, item) => sum + item.qty, 0);
+        const subtotal = orderItems.reduce((sum, item) => sum + item.unitPrice * item.qty, 0);
+        const discountAmount = Math.round(subtotal * (discountPercent / 100));
+        const finalTotal = subtotal - discountAmount;
+  
+        // Фильтрация и сортировка меню
+        const categories = ['Все', ...new Set(menu.map(d => d.category))];
+        const filteredMenu = menu
+          .filter(d => activeCategory === 'Все' || d.category === activeCategory)
+          .filter(d => d.name.toLowerCase().includes(searchQuery.toLowerCase()))
+          .sort((a, b) => {
+            if (sortBy === 'price-asc') return a.price - b.price;
+            if (sortBy === 'price-desc') return b.price - a.price;
+            return 0;
+          });
+  
+        const handleCheckout = () => {
+          playTone(820);
+          setOrderSuccess(`Заказ на сумму ${finalTotal.toLocaleString()} ₸ (${totalCount} поз.) успешно оформлен!`);
+          setOrderItems([]);
+          setDiscountPercent(0);
+          setPromoCode('');
+        };
+  
+        return (
+          <>
+            <header>
+              <div className="logo">
+                <span>🍽 GourmetCraft</span>
+                <span className="logo-badge">Лаб. №11 • Вариант 20</span>
+              </div>
+  
+              <div className="header-controls">
+                <div className="theme-group">
+                  {[
+                    { id: 'dark', label: '🌙 Темная' },
+                    { id: 'light', label: '☀️ Светлая' },
+                    { id: 'emerald', label: '🌿 Изумруд' }
+                  ].map(t => (
+                    <button
+                      key={t.id}
+                      className={`theme-btn ${theme === t.id ? 'active' : ''}`}
+                      onClick={() => setTheme(t.id)}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </header>
+  
+            <main>
+              <div className="workspace">
+                {/* Левая колонка: Каталог блюд */}
+                <div>
+                  <div className="toolbar">
+                    <div className="categories">
+                      {categories.map(cat => (
+                        <button
+                          key={cat}
+                          className={`cat-btn ${activeCategory === cat ? 'active' : ''}`}
+                          onClick={() => setActiveCategory(cat)}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+  
+                    <div className="search-box">
+                      <input
+                        className="search-input"
+                        type="text"
+                        placeholder="Поиск блюда..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                      <select
+                        className="sort-select"
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                      >
+                        <option value="default">По умолчанию</option>
+                        <option value="price-asc">Сначала дешевле</option>
+                        <option value="price-desc">Сначала дороже</option>
+                      </select>
+                    </div>
+                  </div>
+  
+                  <div className="menu-grid">
+                    {filteredMenu.map(dish => (
+                      <MenuItem
+                        key={dish.id}
+                        dish={dish}
+                        onAddToOrder={handleAddToOrder}
+                      />
+                    ))}
+                  </div>
+                </div>
+  
+                {/* Правая колонка: Конструктор заказа (state родителя) */}
+                <aside className="order-panel">
+                  <div className="order-header">
+                    <h2>🧾 Ваш заказ ({totalCount})</h2>
+                    {orderItems.length > 0 && (
+                      <button
+                        className="btn-clear"
+                        onClick={() => { setOrderItems([]); setDiscountPercent(0); }}
+                      >
+                        Очистить
+                      </button>
+                    )}
+                  </div>
+  
+                  {orderItems.length === 0 ? (
+                    <div className="empty-cart">
+                      Выберите блюда из меню слева, настройте размер порции или добавки и нажмите «+ В заказ».
+                    </div>
+                  ) : (
+                    <>
+                      <div className="order-list">
+                        {orderItems.map(item => (
+                          <OrderRow
+                            key={item.key}
+                            item={item}
+                            onUpdateQty={handleUpdateQty}
+                          />
+                        ))}
+                      </div>
+  
+                      <div className="promo-row">
+                        <input
+                          className="promo-input"
+                          type="text"
+                          placeholder="Промокод (введите LAB11)"
+                          value={promoCode}
+                          onChange={(e) => setPromoCode(e.target.value)}
+                        />
+                        <button className="btn-promo" onClick={applyPromo}>OK</button>
+                      </div>
+  
+                      <div className="summary-box">
+                        <div className="summary-line">
+                          <span>Выбрано позиций:</span>
+                          <strong>{totalCount} шт.</strong>
+                        </div>
+                        <div className="summary-line">
+                          <span>Сумма без скидки:</span>
+                          <span>{subtotal.toLocaleString()} ₸</span>
+                        </div>
+                        {discountPercent > 0 && (
+                          <div className="summary-line" style={{ color: 'var(--success)' }}>
+                            <span>Скидка по промокоду ({discountPercent}%):</span>
+                            <span>−{discountAmount.toLocaleString()} ₸</span>
+                          </div>
+                        )}
+                        <div className="summary-total">
+                          <span>Итого:</span>
+                          <span>{finalTotal.toLocaleString()} ₸</span>
+                        </div>
+                      </div>
+  
+                      <button className="btn-checkout" onClick={handleCheckout}>
+                        Оформить заказ
+                      </button>
+                    </>
+                  )}
+  
+                  {orderSuccess && <div className="toast-msg">{orderSuccess}</div>}
+                </aside>
+              </div>
+  
+              <AddDishForm onCreateDish={(newDish) => setMenu(prev => [newDish, ...prev])} />
+              <DefenseReport />
+            </main>
+  
+            <footer>
+              Дисциплина «Языки и технология программирования» • Лабораторная работа № 11 • Вариант № 20 (2026)
+            </footer>
+          </>
+        );
+      }
+  
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  
+  
+  
+  </body></html>

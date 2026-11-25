@@ -1,0 +1,655 @@
+<html lang="ru"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет студента | Лабораторная работа №12 (Вариант 1)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-overlay: rgba(15, 23, 42, 0.72);
+            --card-bg: rgba(255, 255, 255, 0.94);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: rgba(203, 213, 225, 0.85);
+            --input-bg: #ffffff;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --success: #10b981;
+            --subcard-bg: #f8fafc;
+        }
+
+        body.dark-theme {
+            --bg-overlay: rgba(2, 6, 23, 0.88);
+            --card-bg: rgba(30, 41, 59, 0.94);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: rgba(71, 85, 105, 0.65);
+            --input-bg: #0f172a;
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
+            --subcard-bg: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(var(--bg-overlay), var(--bg-overlay)),
+                        url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat fixed;
+            color: var(--text-main);
+            transition: all 0.3s ease;
+        }
+
+        .top-bar {
+            width: 100%;
+            max-width: 880px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #2563eb, #06b6d4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+        }
+
+        .theme-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .theme-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            width: 100%;
+            max-width: 450px;
+            transition: max-width 0.4s ease, background 0.3s ease;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .container.wide {
+            max-width: 880px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-banner {
+            height: 155px;
+            background: linear-gradient(to top, rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.25)),
+                        url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=900&q=80') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 22px 28px;
+            color: #ffffff;
+        }
+
+        .login-banner h2 {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .login-banner p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .form-body {
+            padding: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--input-bg);
+            color: var(--text-main);
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .toggle-pass {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 13px;
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.99);
+        }
+
+        .quick-actions {
+            margin-top: 14px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .quick-btn {
+            background: none;
+            border: 1px dashed var(--accent);
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .quick-btn:hover {
+            background: rgba(37, 99, 235, 0.08);
+        }
+
+        .alert {
+            margin: 0 28px 20px 28px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .alert.error {
+            display: flex;
+            background: rgba(239, 68, 68, 0.12);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .alert.success {
+            display: flex;
+            background: rgba(16, 185, 129, 0.12);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .profile-cover {
+            height: 165px;
+            background: linear-gradient(to right, rgba(37, 99, 235, 0.72), rgba(15, 23, 42, 0.78)),
+                        url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+            position: relative;
+        }
+
+        .session-badge {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(6px);
+            color: #38bdf8;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+        }
+
+        .profile-header {
+            padding: 0 28px 24px 28px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: -54px;
+            position: relative;
+            gap: 16px;
+        }
+
+        .student-info-main {
+            display: flex;
+            align-items: flex-end;
+            gap: 18px;
+        }
+
+        .avatar {
+            width: 108px;
+            height: 108px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--card-bg);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            background: #cbd5e1;
+        }
+
+        .student-details h2 {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .student-details p {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .btn-logout {
+            background: var(--danger);
+            color: #ffffff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-logout:hover {
+            background: var(--danger-hover);
+        }
+
+        .dashboard-grid {
+            padding: 0 28px 24px 28px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--subcard-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .stat-card span {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .stat-card h3 {
+            font-size: 22px;
+            margin-top: 6px;
+            color: var(--accent);
+        }
+
+        .courses-section {
+            padding: 0 28px 28px 28px;
+        }
+
+        .courses-section h3 {
+            font-size: 16px;
+            margin-bottom: 14px;
+            font-weight: 700;
+        }
+
+        .course-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .course-item {
+            background: var(--subcard-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .course-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .course-img {
+            width: 100%;
+            height: 105px;
+            object-fit: cover;
+        }
+
+        .course-content {
+            padding: 14px;
+        }
+
+        .course-content h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .course-content p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .footer-note {
+            padding: 14px 28px;
+            background: rgba(0, 0, 0, 0.03);
+            border-top: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="brand">
+            <div class="brand-logo">🎓</div>
+            <span>UNIVER PORTAL • ЛР №12 (Вариант 1)</span>
+        </div>
+        <button class="theme-btn" id="themeToggle">🌙 Темная тема</button>
+    </div>
+
+    <div class="container" id="mainContainer">
+        <div id="loginSection" class="">
+            <div class="login-banner">
+                <h2>Личный кабинет студента</h2>
+                <p>Авторизуйтесь для доступа к расписанию, оценкам и зачетной книжке</p>
+            </div>
+
+            <div class="form-body">
+                <form id="loginForm" novalidate="">
+                    <div class="form-group">
+                        <label for="login">Студенческий ID (Логин)</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="login" placeholder="Введите логин (student01)" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Пароль</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password" placeholder="Введите пароль (12345)">
+                            <button type="button" class="toggle-pass" id="togglePassword">Показать</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Войти в личный кабинет →</button>
+                </form>
+
+                <div class="quick-actions">
+                    <button type="button" class="quick-btn" id="fillDemoBtn">✨ Подставить тестовые данные (student01 / 12345)</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="cabinetSection" class="hidden">
+            <div class="profile-cover">
+                <div class="session-badge" id="sessionTimer">⏱ Сессия: 04:50</div>
+            </div>
+
+            <div class="profile-header">
+                <div class="student-info-main">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="Аватар студента" class="avatar" onerror="this.src='https://via.placeholder.com/150?text=Student'">
+                    <div class="student-details">
+                        <h2 id="studentName">Алихан Сериков</h2>
+                        <p>ID: <strong>student01</strong> • Группа: <strong>ИС-21</strong> • 2 курс (Бакалавриат)</p>
+                        <p style="color: #10b981; font-weight: 600; margin-top: 4px;">● Сессия активна (Учебный токен подтвержден)</p>
+                    </div>
+                </div>
+
+                <button id="logoutBtn" class="btn-logout">🚪 Выйти из кабинета</button>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <span>Средний балл (GPA)</span>
+                    <h3>3.87 / 4.00</h3>
+                </div>
+                <div class="stat-card">
+                    <span>Посещаемость занятий</span>
+                    <h3>96%</h3>
+                </div>
+                <div class="stat-card">
+                    <span>Сдано лабораторных</span>
+                    <h3>11 из 12</h3>
+                </div>
+            </div>
+
+            <div class="courses-section">
+                <h3>📚 Текущие дисциплины семестра</h3>
+                <div class="course-list">
+                    <div class="course-item">
+                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&amp;fit=crop&amp;w=500&amp;q=80" alt="Программирование" class="course-img">
+                        <div class="course-content">
+                            <h4>Языки и технология программирования</h4>
+                            <p>Лаб. работа №12: JWT, OAuth и сессии</p>
+                        </div>
+                    </div>
+                    <div class="course-item">
+                        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&amp;fit=crop&amp;w=500&amp;q=80" alt="Безопасность" class="course-img">
+                        <div class="course-content">
+                            <h4>Компьютерные сети и безопасность</h4>
+                            <p>Протоколы HTTPS, Cookie и защита от XSS</p>
+                        </div>
+                    </div>
+                    <div class="course-item">
+                        <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&amp;fit=crop&amp;w=500&amp;q=80" alt="Базы данных" class="course-img">
+                        <div class="course-content">
+                            <h4>Проектирование баз данных</h4>
+                            <p>Хеширование паролей и хранение сессий</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="alertBox" class="alert success">✅ Вы успешно вышли из личного кабинета. Сессия закрыта.</div>
+
+        <div class="footer-note">
+            Учебный интерфейсный прототип • Вариант №1 (Лабораторная работа №12) • Тестовый доступ: <b>student01</b> / <b>12345</b>
+        </div>
+    </div>
+
+    <script>
+        const DEMO_STUDENT = {
+            login: 'student01',
+            password: '12345',
+            name: 'Алихан Сериков'
+        };
+
+        const mainContainer = document.getElementById('mainContainer');
+        const loginSection = document.getElementById('loginSection');
+        const cabinetSection = document.getElementById('cabinetSection');
+        const loginForm = document.getElementById('loginForm');
+        const alertBox = document.getElementById('alertBox');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const sessionTimerEl = document.getElementById('sessionTimer');
+
+        let timerInterval = null;
+        let secondsLeft = 300;
+
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            const isDark = document.body.classList.contains('dark-theme');
+            themeToggle.textContent = isDark ? '☀️ Светлая тема' : '🌙 Темная тема';
+        });
+
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            togglePassword.textContent = type === 'password' ? 'Показать' : 'Скрыть';
+        });
+
+        document.getElementById('fillDemoBtn').addEventListener('click', () => {
+            document.getElementById('login').value = DEMO_STUDENT.login;
+            document.getElementById('password').value = DEMO_STUDENT.password;
+            hideAlert();
+        });
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const loginVal = document.getElementById('login').value.trim();
+            const passVal = document.getElementById('password').value.trim();
+
+            if (!loginVal || !passVal) {
+                showAlert('⚠️ Ошибка 400: Заполните оба поля — логин и пароль.', 'error');
+                return;
+            }
+
+            if (loginVal === DEMO_STUDENT.login && passVal === DEMO_STUDENT.password) {
+                hideAlert();
+                openCabinet();
+            } else {
+                showAlert('⛔ Ошибка 401: Неверный студенческий ID или пароль.', 'error');
+            }
+        });
+
+        function openCabinet() {
+            loginSection.classList.add('hidden');
+            cabinetSection.classList.remove('hidden');
+            mainContainer.classList.add('wide');
+            startSessionTimer();
+        }
+
+        logoutBtn.addEventListener('click', () => {
+            closeCabinet('Вы успешно вышли из личного кабинета. Сессия закрыта.');
+        });
+
+        function closeCabinet(message) {
+            clearInterval(timerInterval);
+            cabinetSection.classList.add('hidden');
+            loginSection.classList.remove('hidden');
+            mainContainer.classList.remove('wide');
+            loginForm.reset();
+            showAlert('✅ ' + message, 'success');
+        }
+
+        function startSessionTimer() {
+            secondsLeft = 300;
+            updateTimerDisplay();
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                secondsLeft--;
+                updateTimerDisplay();
+                if (secondsLeft <= 0) {
+                    closeCabinet('Время учебной сессии истекло. Выполните повторный вход.');
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+            const secs = String(secondsLeft % 60).padStart(2, '0');
+            sessionTimerEl.textContent = `⏱ Сессия: ${mins}:${secs}`;
+        }
+
+        function showAlert(text, type) {
+            alertBox.textContent = text;
+            alertBox.className = 'alert ' + type;
+        }
+
+        function hideAlert() {
+            alertBox.className = 'alert';
+        }
+    </script>
+
+</body></html>
